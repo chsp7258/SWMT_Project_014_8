@@ -1,5 +1,5 @@
 # SWMT_Project_014_8
-Team Members:  <br>
+**Team Members:**  <br>
 Abdullahi Husein  <br>
 Alec Wang  <br>
 Christopher Sponza  <br>
