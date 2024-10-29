@@ -33,14 +33,13 @@
 6. ### **Vision Statement:** “To be the go-to platform for budget-conscious diners, where users can find and discover affordable, quality meals at local restaurants with ease.”
 
      
-7. **Version Control**: Done  
+7. ### **Version Control:** updated github with all relevant files 
    
 
-8. ### **Development Methodology:** Agile development with a kanban board on github project board. 
+8. ### **Development Methodology:** Agile development with a kanban board on github projects. 
 
 9. ### **Communication Plan:** Our team will use Discord as our primary platform for collaboration and communication, enabling us to coordinate tasks, share updates, and promptly address any issues that arise. Additionally, we will use GitHub comments on user story issues to keep communication organized and track our project development tasks. Weekly team meetings are scheduled for Mondays at 12:15 PM, with the flexibility to adjust to after the TA meeting if needed, based on team members' availability.
 
-   ### 
 
 10. ### **Meeting Plan:** Our team has scheduled regular meetings on Mondays at 12:15 PM via group video chat on Discord to review progress, discuss upcoming tasks, and address any challenges. Additionally, we will meet with our TA every Wednesday at 1:30 PM via Zoom. This consistent schedule will help ensure alignment, maintain effective communication, and keep the project on track.
 
