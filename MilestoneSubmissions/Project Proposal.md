@@ -8,15 +8,15 @@
 
 3. ### **Team Members:** 
 
-   1. ### **Abdullahi Husein: Abdullahihus**
+   1. ### **Abdullahi Husein: Abdullahihus        abdullahi.husein@colorado.edu**
 
-   2. ### **Alec Wang: wangalec**
+   2. ### **Alec Wang: wangalec                   alec.wang@colorado.edu**
 
-   3. ### **Christopher Sponza: chsp7258**
+   3. ### **Christopher Sponza: chsp7258          christopher.sponza@colorado.edu**
 
-   4. ### **Mara Backsen: meb321**
+   4. ### **Mara Backsen: meb321                  mara.backsen@colorado.edu**
 
-   5. ### **Nathnael Tewelde: NatTew**
+   5. ### **Nathnael Tewelde: NatTew              nathnael.tewelde@colorado.edu**
 
 4. ### **Application Name[​](https://cuboulder-csci3308.pages.dev/docs/labs/lab9/#4-application-name):** Cheap-Eats
 
