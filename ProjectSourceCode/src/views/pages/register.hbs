@@ -1,0 +1,26 @@
+<!-- Background container for register page -->
+<div class="bg-container">
+    <div class="container mt-5 pt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 bg-light p-4 rounded shadow">
+                <form action="/register" method="post">
+                    <h1 class="text-center mb-4">Register</h1>
+
+                    <div class="form-group mb-3">
+                        <label for="username">Username</label>
+                        <input class="form-control" name="username" required>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="password">Password</label>
+                        <input class="form-control" type="password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 mb-3">Register</button>
+
+                    <p class="text-center">Already have an account? <a href="/login">Login</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
