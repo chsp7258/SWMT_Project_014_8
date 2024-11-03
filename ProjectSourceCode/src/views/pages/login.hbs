@@ -1,0 +1,26 @@
+<!-- Background container -->
+<div class="bg-container">
+    <div class="container mt-5 pt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 bg-light p-4 rounded shadow">
+                <form action="/login" method="post">
+                    <h1 class="text-center mb-4">Login</h1>
+
+                    <div class="form-group mb-3">
+                        <label for="username" id="username">Username</label>
+                        <input class="form-control" name="username" required>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="password" id="password">Password</label>
+                        <input class="form-control" type="password" name="password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 mb-3">Log In</button>
+
+                    <p class="text-center">Don't have an account? <a href="/register">Register</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
