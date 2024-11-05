@@ -161,7 +161,13 @@ app.use(auth);
 
 
 app.get('/discover', (req, res) => {
+  //this should render the discover page and query the ranked list of restaurants, returning them in a variable called "restaurants", per html
   
+});
+
+app.get('/getRestaurants', (req, res) => {
+  //should return the info for a particular resturant based on queried name and render this on the page
+
 });
 
 

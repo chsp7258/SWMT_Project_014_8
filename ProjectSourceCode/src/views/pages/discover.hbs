@@ -1,0 +1,54 @@
+<h1>Find Restaurants in Boulder!</h1>
+<br><br>
+<br><br>
+<form  action="/getRestaurant" method="GET">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Search for a restaurant</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="search for a restaurant" name="searchedRestaurant">
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<br><br>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+    {{!-- change this based on variable names from the database --}}
+    {{#each restaurants}}
+    
+      <tr>
+      <td>{{this.name}}</td>
+      <td>
+        <img src= "{{this.image}}" width="200"></img>
+      </td>
+      <td>{{this.rating}}</td>
+      <td>{{this.address}}</td>
+      <td>{{this.website}}</td>
+      <td>
+        
+        <form action="/getRestaurant" method="GET">
+        <div class="form-group">
+          <input type="hidden">
+          <button type="submit" disabled class="btn btn-primary">More details!</button>
+        </div>
+        
+
+      </form>
+
+      </td>
+
+      </tr>
+
+
+    {{/each}}
+
+</table>
