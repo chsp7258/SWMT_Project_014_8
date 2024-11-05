@@ -1,0 +1,18 @@
+/*login and register page syling
+/* Full-screen background with green overlay */
+.bg-container {
+    position: relative;
+    min-height: 100vh;                                  /*make container fit whole screen*/
+    background: rgb(174, 197, 161);
+    display: flex;                                          /*puts container in middle vertically and horizontally*/
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+
+
+/* Styling for the form box */
+.bg-container .bg-light {
+    background-color: white !important;
+}
