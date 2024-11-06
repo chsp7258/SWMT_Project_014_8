@@ -1,0 +1,19 @@
+<!-- logout.hbs -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card p-4 shadow">
+                <h2 class="card-title">Logout</h2>
+                <p class="mb-4">Are you sure you want to log out?</p>
+                
+                <!-- Logout confirmation button -->
+                <form action="/logout" method="post">
+                    <button type="submit" class="btn btn-danger w-100 mb-2">Yes, Log Out</button>
+                </form>
+
+                <!-- Cancel button to redirect back -->
+                <a href="/" class="btn btn-secondary w-100">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
