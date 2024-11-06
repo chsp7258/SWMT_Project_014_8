@@ -163,6 +163,27 @@ app.get('/getRestaurants', (req, res) => {
 
 });
 
+// APIs to interact with backend database
+/* 
+Purpose: get all restaurants and rankings
+*/
+app.get('/rankings/discover', async (req, res) => {
+
+});
+
+/*
+Purpose: add a ranking for a resturant
+Request body: 
+{
+    userId: number, 
+    restaurantId: number,
+    ranking: number
+}
+*/
+app.post('/rankings/add', async (req, res) => {
+
+});
+
 
 // *****************************************************
 // <!-- Section 5 : Start Server-->
