@@ -16,3 +16,18 @@
 .bg-container .bg-light {
     background-color: white !important;
 }
+
+/* styling for discover page */
+.discover_body {
+    background-color: lightblue
+}
+
+/* styling for heading */
+h1 {
+    color: black
+}
+
+
+
+
+
