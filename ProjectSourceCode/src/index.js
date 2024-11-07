@@ -96,43 +96,26 @@ app.get('/register', (req, res) => {
 })
 
 
-// app.post('/register', async (req, res) => {
-//     const hash = await bcrypt.hash(req.body.password, 10);
-//     const username = req.body.username;
-
-//     const query = 'insert into users (username, password) values($1, $2);';
-
-//     db.none(query, [username, hash])
-//         .then(data => {
-//             res.redirect('/login');
-//         })
-
-//         .catch(err => {
-//             console.log(err);
-//             res.redirect('/register');
-//         });
-// });
-
-// for testing 
 app.post('/register', async (req, res) => {
-
-    const {username, password} = req.body
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const username = req.body.username;
 
     if (username.includes('!')) {
         return res.status(400).json({ message: 'Invalid input'});
     }
-    try {
-        const hash = await bcrypt.hash(password, 10);
-        const query = 'insert into users (username, password) values($1, $2);';
 
-        await db.none(query, [username, hash]);
-        res.status(200).redirect('/login');
-    } catch (err) {
-        console.error('Error during registration:', err);
-        res.redirect('/register');
-    }
+    const query = 'insert into users (username, password) values($1, $2);';
+
+    db.none(query, [username, hash])
+        .then(data => {
+            res.redirect('/login');
+        })
+
+        .catch(err => {
+            console.log(err);
+            res.redirect('/register');
+        });
 });
-
 
 
 app.post('/login', async (req, res) => {
@@ -143,10 +126,10 @@ app.post('/login', async (req, res) => {
         const user = await db.oneOrNone(query, [username]);
 
         if (!user) {
-            return res.redirect('/register');
+            return res.redirect(400, '/register');
         }
 
-        const match = await bcrypt.compare(req.body.password, user.password);
+        const match = await bcrypt.compare(password, user.password);
 
         if (!match) {
             return res.render('pages/login', { message: "Incorrect username or password please try again" });
@@ -158,9 +141,9 @@ app.post('/login', async (req, res) => {
         // console.log(req.session.user);
         res.redirect('/discover');
 
-
     } catch (error) {
-        console.log(err);
+        console.log(error);
+        res.status(400);
     };
 });
 
