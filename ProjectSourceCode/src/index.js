@@ -184,18 +184,22 @@ app.get('/discover', (req, res) => {
     res.render('pages/discover');
 });
 
-app.get('/getRestaurants', (req, res) => {
-    //should return the info for a particular resturant based on queried name and render this on the page
-
-});
 
 // APIs to interact with backend database
 /* 
 Purpose: get all restaurants and rankings
 */
 app.get('/rankings/discover', async (req, res) => {
+//I'm trying to access name, image, address, rating, website
+//can you query these?
+//I'm calling variable restaurant
+});
+
+app.get('/getRestaurants', (req, res) => {
+    //should return the info for a particular resturant based on queried name and render this on the page
 
 });
+
 
 /*
 Purpose: add a ranking for a resturant
