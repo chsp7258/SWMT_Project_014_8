@@ -79,6 +79,10 @@ app.use(
 // *****************************************************
 
 
+app.get('/welcome', (req, res) => {
+    res.json({status: 'success', message: 'Welcome!'});
+  });
+
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
@@ -92,22 +96,44 @@ app.get('/register', (req, res) => {
 })
 
 
+// app.post('/register', async (req, res) => {
+//     const hash = await bcrypt.hash(req.body.password, 10);
+//     const username = req.body.username;
+
+//     const query = 'insert into users (username, password) values($1, $2);';
+
+//     db.none(query, [username, hash])
+//         .then(data => {
+//             res.redirect('/login');
+//         })
+
+//         .catch(err => {
+//             console.log(err);
+//             res.redirect('/register');
+//         });
+// });
+
+// for testing 
 app.post('/register', async (req, res) => {
-    const hash = await bcrypt.hash(req.body.password, 10);
-    const username = req.body.username;
 
-    const query = 'insert into users (username, password) values($1, $2);';
+    const {username, password} = req.body
 
-    db.none(query, [username, hash])
-        .then(data => {
-            res.redirect('/login');
-        })
+    if (username.includes('!')) {
+        return res.status(400).json({ message: 'Invalid input'});
+    }
+    try {
+        const hash = await bcrypt.hash(password, 10);
+        const query = 'insert into users (username, password) values($1, $2);';
 
-        .catch(err => {
-            console.log(err);
-            res.redirect('/register');
-        });
+        await db.none(query, [username, hash]);
+        res.status(200).redirect('/login');
+    } catch (err) {
+        console.error('Error during registration:', err);
+        res.redirect('/register');
+    }
 });
+
+
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
@@ -189,5 +215,5 @@ app.post('/rankings/add', async (req, res) => {
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-app.listen(3000);
+module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');
