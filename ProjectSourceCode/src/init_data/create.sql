@@ -10,22 +10,19 @@ CREATE TABLE Restaurants (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     current_rank INTEGER,
-    total_rankings INTEGER DEFAULT 0,
+    total_rankings INTEGER DEFAULT 0
 );
 
 CREATE TABLE User_to_Rankings (
     user_id INT,
     restaurant_id INT,
     ranking VARCHAR(50),
-    PRIMARY KEY (user_id, restaurant_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id) ON DELETE CASCADE
+    PRIMARY KEY (user_id, restaurant_id)
 );
 
 CREATE TABLE Restaurant_to_Rankings (
     restaurant_id INT,
-    ranking int,
-    FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id) ON DELETE CASCADE
+    ranking int
 );
 
 
@@ -35,3 +32,4 @@ CREATE TABLE Restaurant_to_Rankings (
 - rating 
 - website
 - button for more details? (maybe all the reviews, rankings, etc.)
+*/
