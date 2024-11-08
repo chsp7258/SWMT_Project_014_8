@@ -161,11 +161,20 @@ const auth = (req, res, next) => {
 app.use(auth);
 
 
+app.get('/logout', (req, res) => {
+    res.render('pages/logout', {message: "Logged out successfully!"});
+    req.session.destroy();
+  });
+
 
 app.get('/discover', (req, res) => {
     //this should render the discover page and query the ranked list of restaurants, returning them in a variable called "restaurants", per html
     res.render('pages/discover');
 });
+
+app.get('/home', (req, res) => {
+    res.render('pages/home');
+})
 
 
 // APIs to interact with backend database
@@ -175,13 +184,17 @@ Purpose: get all restaurants and rankings
 app.get('/rankings/discover', async (req, res) => {
 //I'm trying to access name, image, address, rating, website
 //can you query these?
-//I'm calling variable restaurant
+//I'm calling variable restaurants
 });
 
-app.get('/getRestaurants', (req, res) => {
+app.get('/getRestaurant', (req, res) => {
     //should return the info for a particular resturant based on queried name and render this on the page
 
 });
+
+app.get('/rankings/home', async (req, res) => {
+    //should return the ranked list for an individual
+})
 
 
 /*
