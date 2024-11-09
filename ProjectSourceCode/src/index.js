@@ -206,15 +206,71 @@ Request body:
     ranking: number
 }
 */
-app.post('/rankings/add', async (req, res) => {
+app.post('/ratings/add', async (req, res) => {
+    try {
+        const { user_id, restaurant_id, price_rating, food_rating } = req.body;
 
+        // Validate inputs
+        if (!user_id || !restaurant_id || !price_rating || !food_rating) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        if (price_rating < 1 || price_rating > 5 || food_rating < 1 || food_rating > 5) {
+            return res.status(400).json({ error: 'Ratings must be between 1 and 5' });
+        }
+
+        // Check if user has already rated this restaurant
+        const existingRating = await pool.query(
+            'SELECT * FROM Ratings WHERE user_id = $1 AND restaurant_id = $2',
+            [user_id, restaurant_id]
+        );
+
+        if (existingRating.rows.length > 0) {
+            return res.status(400).json({ error: 'User has already rated this restaurant' });
+        }
+
+        // Update restaurant's overall rating and total_ratings
+        const currentRestaurant = await client.query(
+            'SELECT rating, total_ratings FROM Restaurants WHERE id = $1',
+            [restaurant_id]
+        );
+        const { rating, total_ratings } = currentRestaurant.rows[0];
+        const user_rating = calculateUserRating(price_rating, food_rating);
+        const restaurant_rating = calculateRestaurantRating(rating, total_ratings, user_rating);
+
+        // Add new rating
+        const newRating = await pool.query(
+            'INSERT INTO Ratings (user_id, restaurant_id, rating) VALUES ($1, $2, $3) RETURNING *',
+            [user_id, restaurant_id, user_rating]
+        );
+
+        await pool.query(
+            `UPDATE Restaurants 
+             SET rating = $1,
+                total_ratings = total_ratings + 1
+             WHERE id = $2`,
+            [restaurant_rating, restaurant_id]
+        );
+
+        res.json({
+            message: 'Rating added successfully',
+            rating: newRating.rows[0]
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
-app.get('/getUserInfo', async (req, res) => {
-    //return ranked list of restaurants from user ID
-    //store in variable called restaurants
-    //keep track of image, name, info
-})
+// Helper Functions
+const calculateUserRating = (price_rating, food_rating) => {
+    return (price_rating + food_rating) / 2;
+};
+
+const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
+    return (current_rating * total_ratings + user_rating) / (total_ratings + 1);
+};
 
 
 // *****************************************************
