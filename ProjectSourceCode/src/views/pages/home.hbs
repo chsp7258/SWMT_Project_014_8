@@ -1,0 +1,19 @@
+
+<h1 align="center">Welcome, {{username}}!</h1>
+
+<div id="hobbies" class ="row">
+
+<div action="/getUserInfo" method="GET">
+        <div class="col">
+            {{#each restaurants}}
+            <div class="card" style="width: 25rem;" id="hobby-card-1">
+                <img src="{{this.image}}" class="card-img-top">
+                <div class="card-body">
+                  <h5 class="card-title">{{this.name}}</h5>
+                  <p class="card-text">{{this.restaurantInfo}}</p>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+</div>
+</div>

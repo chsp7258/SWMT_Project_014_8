@@ -182,7 +182,7 @@ app.get('/home', (req, res) => {
 Purpose: get all restaurants and rankings
 */
 app.get('/rankings/discover', async (req, res) => {
-//I'm trying to access name, image, address, rating, website
+//I'm trying to access name, image, info
 //can you query these?
 //I'm calling variable restaurants
 });
@@ -209,6 +209,12 @@ Request body:
 app.post('/rankings/add', async (req, res) => {
 
 });
+
+app.get('/getUserInfo', async (req, res) => {
+    //return ranked list of restaurants from user ID
+    //store in variable called restaurants
+    //keep track of image, name, info
+})
 
 
 // *****************************************************
