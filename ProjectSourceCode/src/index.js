@@ -79,6 +79,10 @@ app.use(
 // *****************************************************
 
 
+app.get('/welcome', (req, res) => {
+    res.json({status: 'success', message: 'Welcome!'});
+  });
+
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
@@ -88,13 +92,18 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    res.render('pages/register');
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/register', { loggedIn });
 })
 
 
 app.post('/register', async (req, res) => {
     const hash = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
+
+    if (username.includes('!')) {
+        return res.status(400).json({ message: 'Invalid input'});
+    }
 
     const query = 'insert into users (username, password) values($1, $2);';
 
@@ -109,6 +118,7 @@ app.post('/register', async (req, res) => {
         });
 });
 
+
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     const query = `select id ,username, password from users where username = $1;`;
@@ -117,10 +127,10 @@ app.post('/login', async (req, res) => {
         const user = await db.oneOrNone(query, [username]);
 
         if (!user) {
-            return res.redirect('/register');
+            return res.redirect(400, '/register');
         }
 
-        const match = await bcrypt.compare(req.body.password, user.password);
+        const match = await bcrypt.compare(password, user.password);
 
         if (!match) {
             return res.render('pages/login', { message: "Incorrect username or password please try again" });
@@ -132,9 +142,9 @@ app.post('/login', async (req, res) => {
         // console.log(req.session.user);
         res.redirect('/discover');
 
-
     } catch (error) {
-        console.log(err);
+        console.log(error);
+        res.status(400);
     };
 });
 
@@ -152,24 +162,42 @@ const auth = (req, res, next) => {
 app.use(auth);
 
 
+app.get('/logout', (req, res) => {
+    res.render('pages/logout', {message: "Logged out successfully!"});
+    req.session.destroy();
+  });
 
-app.get('/discover', (req, res) => {
-    //this should render the discover page and query the ranked list of restaurants, returning them in a variable called "restaurants", per html
-    res.render('pages/discover');
+
+  app.get('/discover', (req, res) => {
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/discover', { loggedIn });
 });
 
-app.get('/getRestaurants', (req, res) => {
-    //should return the info for a particular resturant based on queried name and render this on the page
-
+app.get('/home', (req, res) => {
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/home', { loggedIn });
 });
+
 
 // APIs to interact with backend database
 /* 
 Purpose: get all restaurants and rankings
 */
 app.get('/rankings/discover', async (req, res) => {
+//I'm trying to access name, image, info
+//can you query these?
+//I'm calling variable restaurants
+});
+
+app.get('/getRestaurant', (req, res) => {
+    //should return the info for a particular resturant based on queried name and render this on the page
 
 });
+
+app.get('/rankings/home', async (req, res) => {
+    //should return the ranked list for an individual
+})
+
 
 /*
 Purpose: add a ranking for a resturant
@@ -180,14 +208,76 @@ Request body:
     ranking: number
 }
 */
-app.post('/rankings/add', async (req, res) => {
+app.post('/ratings/add', async (req, res) => {
+    try {
+        const { user_id, restaurant_id, price_rating, food_rating } = req.body;
 
+        // Validate inputs
+        if (!user_id || !restaurant_id || !price_rating || !food_rating) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        if (price_rating < 1 || price_rating > 5 || food_rating < 1 || food_rating > 5) {
+            return res.status(400).json({ error: 'Ratings must be between 1 and 5' });
+        }
+
+        // Check if user has already rated this restaurant
+        const existingRating = await pool.query(
+            'SELECT * FROM Ratings WHERE user_id = $1 AND restaurant_id = $2',
+            [user_id, restaurant_id]
+        );
+
+        if (existingRating.rows.length > 0) {
+            return res.status(400).json({ error: 'User has already rated this restaurant' });
+        }
+
+        // Update restaurant's overall rating and total_ratings
+        const currentRestaurant = await client.query(
+            'SELECT rating, total_ratings FROM Restaurants WHERE id = $1',
+            [restaurant_id]
+        );
+        const { rating, total_ratings } = currentRestaurant.rows[0];
+        const user_rating = calculateUserRating(price_rating, food_rating);
+        const restaurant_rating = calculateRestaurantRating(rating, total_ratings, user_rating);
+
+        // Add new rating
+        const newRating = await pool.query(
+            'INSERT INTO Ratings (user_id, restaurant_id, rating) VALUES ($1, $2, $3) RETURNING *',
+            [user_id, restaurant_id, user_rating]
+        );
+
+        await pool.query(
+            `UPDATE Restaurants 
+             SET rating = $1,
+                total_ratings = total_ratings + 1
+             WHERE id = $2`,
+            [restaurant_rating, restaurant_id]
+        );
+
+        res.json({
+            message: 'Rating added successfully',
+            rating: newRating.rows[0]
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
+
+// Helper Functions
+const calculateUserRating = (price_rating, food_rating) => {
+    return (price_rating + food_rating) / 2;
+};
+
+const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
+    return (current_rating * total_ratings + user_rating) / (total_ratings + 1);
+};
 
 
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
-app.listen(3000);
-console.log('Server is listening on port 3000');
+module.exports = app.listen(3000);
+console.log('Server is listening on port 3000');    
