@@ -101,7 +101,7 @@ app.post('/register', async (req, res) => {
     const username = req.body.username;
 
     if (username.includes('!')) {
-        return res.status(400).json({ message: 'Invalid input' });
+        return res.status(400).render('pages/register', {message: 'Username cannot contain special characters like "!"'});
     }
 
     const query = 'insert into users (username, password) values($1, $2);';
@@ -126,7 +126,7 @@ app.post('/login', async (req, res) => {
         const user = await db.oneOrNone(query, [username]);
 
         if (!user) {
-            return res.redirect(400, '/register');
+            return res.status(400).render('pages/login', { message: "Username not found. Please try again or register." });
         }
 
         const match = await bcrypt.compare(password, user.password);
@@ -169,11 +169,11 @@ app.get('/logout', (req, res) => {
 
 app.get('/discover', (req, res) => {
     //this should render the discover page and query the ranked list of restaurants, returning them in a variable called "restaurants", per html
-    res.render('pages/discover');
+    res.render('pages/discover', {loggedIn: true });
 });
 
 app.get('/home', (req, res) => {
-    res.render('pages/home');
+    res.render('pages/home', {loggedIn: true });
 })
 
 // call to yelp to get info of restaurants
@@ -196,15 +196,15 @@ app.get('/search-restaurant', (req, res) => {
         .then((response) => {
             const restaurants = response.data.businesses;
             if (restaurants.length === 0) {
-                res.render('pages/discover', { message: 'No matching restaurants found. Please enter a valid restaurant name.', isLogedin: true });
+                res.render('pages/discover', { message: 'No matching restaurants found. Please enter a valid restaurant name.', loggedIn: true });
             } else {
-                res.render('pages/discover', { restaurants, isLogedin: true });
+                res.render('pages/discover', { restaurants,  loggedIn: true });
             }
         })
 
         .catch(error => {
             console.error('Error fetching data from Yelp API:', error);
-            res.render('pages/discover', { message: 'Could not fetch businesses. Please try again later.', isLogedin: true });
+            res.render('pages/discover', { message: 'Could not fetch businesses. Please try again later.', loggedIn: true });
         });
 
 });
