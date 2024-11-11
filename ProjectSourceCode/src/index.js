@@ -80,8 +80,8 @@ app.use(
 
 
 app.get('/welcome', (req, res) => {
-    res.json({status: 'success', message: 'Welcome!'});
-  });
+    res.json({ status: 'success', message: 'Welcome!' });
+});
 
 app.get('/', (req, res) => {
     res.redirect('/login');
@@ -101,7 +101,7 @@ app.post('/register', async (req, res) => {
     const username = req.body.username;
 
     if (username.includes('!')) {
-        return res.status(400).json({ message: 'Invalid input'});
+        return res.status(400).json({ message: 'Invalid input' });
     }
 
     const query = 'insert into users (username, password) values($1, $2);';
@@ -162,9 +162,9 @@ app.use(auth);
 
 
 app.get('/logout', (req, res) => {
-    res.render('pages/logout', {message: "Logged out successfully!"});
+    res.render('pages/logout', { message: "Logged out successfully!" });
     req.session.destroy();
-  });
+});
 
 
 app.get('/discover', (req, res) => {
@@ -176,15 +176,47 @@ app.get('/home', (req, res) => {
     res.render('pages/home');
 })
 
+// call to yelp to get info of restaurants
+app.get('/search-restaurant', (req, res) => {
+    const { name, city } = req.query;
+
+    axios({
+        url: `https://api.yelp.com/v3/businesses/search`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${process.env.API_KEY.trim()}`,
+            'Accept-Encoding': 'application/json',
+        },
+        params: {
+            term: name,    // Restaurant name
+            location: city, // City specified by the user
+            limit: 3       // Limit results for simplicity
+        },
+    })
+        .then((response) => {
+            const restaurants = response.data.businesses;
+            if (restaurants.length === 0) {
+                res.render('pages/discover', { message: 'No matching restaurants found. Please enter a valid restaurant name.', isLogedin: true });
+            } else {
+                res.render('pages/discover', { restaurants, isLogedin: true });
+            }
+        })
+
+        .catch(error => {
+            console.error('Error fetching data from Yelp API:', error);
+            res.render('pages/discover', { message: 'Could not fetch businesses. Please try again later.', isLogedin: true });
+        });
+
+});
 
 // APIs to interact with backend database
 /* 
 Purpose: get all restaurants and rankings
 */
 app.get('/rankings/discover', async (req, res) => {
-//I'm trying to access name, image, info
-//can you query these?
-//I'm calling variable restaurants
+    //I'm trying to access name, image, info
+    //can you query these?
+    //I'm calling variable restaurants
 });
 
 app.get('/getRestaurant', (req, res) => {
