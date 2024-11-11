@@ -219,16 +219,6 @@ app.get('/rankings/discover', async (req, res) => {
     //I'm calling variable restaurants
 });
 
-app.get('/getRestaurant', (req, res) => {
-    //should return the info for a particular resturant based on queried name and render this on the page
-
-});
-
-app.get('/rankings/home', async (req, res) => {
-    //should return the ranked list for an individual
-})
-
-
 /*
 Purpose: add a ranking for a resturant
 Request body: 
@@ -288,6 +278,31 @@ app.post('/ratings/add', async (req, res) => {
             message: 'Rating added successfully',
             rating: newRating.rows[0]
         });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+/*
+Purpose: getting ratings for a specific restaurant id with params
+*/
+app.get('/ratings/:restaurantId', async (req, res) => {
+    try {
+        const { restaurantId } = req.params;
+
+        // Get restaurant details with its current rating
+        const restaurant = await pool.query(
+            'SELECT name, rating, total_ratings FROM Restaurants WHERE id = $1',
+            [restaurantId]
+        );
+
+        if (restaurant.rows.length === 0) {
+            return res.status(404).json({ error: 'Restaurant not found' });
+        }
+
+        res.json(restaurant.rows[0]);
 
     } catch (err) {
         console.error(err);
