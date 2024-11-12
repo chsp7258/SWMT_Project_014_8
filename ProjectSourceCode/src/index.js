@@ -247,9 +247,8 @@ app.post('/ratings/add', async (req, res) => {
         const { name, price_rating, food_rating } = req.body;
         const user_id = req.session.user.id; // Ensure user session is set
 
-
-        // Validate inputs
-        if (!user_id || !restaurant_id || !price_rating || !food_rating) {
+        // Ensure required fields are present
+        if (!user_id || !price_rating || !food_rating || !name) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
@@ -266,42 +265,39 @@ app.post('/ratings/add', async (req, res) => {
 
         const restaurant_id = restaurant.id;
 
-
-        // Check if user has already rated this restaurant
-        const existingRating = await pool.query(
+        // Check if the user has already rated this restaurant
+        const existingRating = await db.oneOrNone(
             'SELECT * FROM Ratings WHERE user_id = $1 AND restaurant_id = $2',
             [user_id, restaurant_id]
         );
-
-        if (existingRating.rows.length > 0) {
+            // maybe go to home to show that they did? 
+        if (existingRating) {
             return res.render('pages/discover' ,{ message: 'User has already rated this restaurant' });
         }
-        // Update restaurant's overall rating and total_ratings
-        const currentRestaurant = await client.query(
-            'SELECT rating, total_ratings FROM Restaurants WHERE id = $1',
-            [restaurant_id]
-        );
-        const { rating, total_ratings } = currentRestaurant.rows[0];
+// Calculate the user rating
         const user_rating = calculateUserRating(price_rating, food_rating);
-        const restaurant_rating = calculateRestaurantRating(rating, total_ratings, user_rating);
 
-        // Add new rating
-        const newRating = await pool.query(
+        // Add the new rating
+        const newRating = await db.one(
             'INSERT INTO Ratings (user_id, restaurant_id, rating) VALUES ($1, $2, $3) RETURNING *',
             [user_id, restaurant_id, user_rating]
         );
 
-        await pool.query(
+        // Update restaurant's overall rating and total ratings count
+        const updatedTotalRatings = restaurant.total_ratings + 1;
+        const updatedRating = calculateRestaurantRating(restaurant.rating, restaurant.total_ratings, user_rating);
+
+        await db.query(
             `UPDATE Restaurants 
              SET rating = $1,
-                total_ratings = total_ratings + 1
-             WHERE id = $2`,
-            [restaurant_rating, restaurant_id]
+                 total_ratings = $2
+             WHERE id = $3`,
+            [updatedRating, updatedTotalRatings, restaurant_id]
         );
 
-        res.json({
+        res.render({
             message: 'Rating added successfully',
-            rating: newRating.rows[0]
+            rating: newRating
         });
 
     } catch (err) {
