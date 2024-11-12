@@ -197,8 +197,7 @@ app.get('/search-restaurant', (req, res) => {
             console.error('Error fetching data from Yelp API:', error);
             res.render('pages/discover', { message: 'Could not fetch businesses. Please try again later.', loggedIn: true });
         });
-    res.render('pages/logout', {message: "Logged out successfully!"});
-    req.session.destroy();
+
   });
 
 
@@ -237,18 +236,36 @@ Request body:
     ranking: number
 }
 */
+app.get('/add-restaurant', (req, res) => {
+    const { name, city } = req.query;
+    res.render('pages/add-restaurant', { name, city, loggedIn: true });
+});
+
+
 app.post('/ratings/add', async (req, res) => {
     try {
-        const { user_id, restaurant_id, price_rating, food_rating } = req.body;
+        const { name, price_rating, food_rating } = req.body;
+        const user_id = req.session.user.id; // Ensure user session is set
+
 
         // Validate inputs
         if (!user_id || !restaurant_id || !price_rating || !food_rating) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        if (price_rating < 1 || price_rating > 5 || food_rating < 1 || food_rating > 5) {
-            return res.status(400).json({ error: 'Ratings must be between 1 and 5' });
+        // Check if the restaurant already exists
+        let restaurant = await db.oneOrNone('SELECT * FROM Restaurants WHERE name = $1', [name]);
+        if (!restaurant) {
+            // If the restaurant does not exist, add it
+            restaurant = await db.one(
+              `INSERT INTO Restaurants (name, rating, total_ratings)
+               VALUES ($1, 0, 0) RETURNING *`,
+              [name]
+            );
         }
+
+        const restaurant_id = restaurant.id;
+
 
         // Check if user has already rated this restaurant
         const existingRating = await pool.query(
@@ -257,7 +274,7 @@ app.post('/ratings/add', async (req, res) => {
         );
 
         if (existingRating.rows.length > 0) {
-            return res.status(400).json({ error: 'User has already rated this restaurant' });
+            return res.render('pages/discover' ,{ message: 'User has already rated this restaurant' });
         }
         // Update restaurant's overall rating and total_ratings
         const currentRestaurant = await client.query(
