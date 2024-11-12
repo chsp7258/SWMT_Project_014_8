@@ -206,10 +206,10 @@ app.get('/search-restaurant', (req, res) => {
     res.render('pages/discover', { loggedIn });
 });
 
-app.get('/home', (req, res) => {
-    const loggedIn = req.session.user ? true : false;
-    res.render('pages/home', { loggedIn });
-});
+// app.get('/home', (req, res) => {
+//     const loggedIn = req.session.user ? true : false;
+//     res.render('pages/home', { loggedIn });
+// });
 
 
 // APIs to interact with backend database
@@ -225,7 +225,36 @@ app.get('/rankings/discover', async (req, res) => {
 app.get('/rankings/home', async (req, res) => {
     //should return the ranked list for an individual
 })
+app.get('/rankings/home', async (req, res) => {
+    //should return the ranked list for an individual
+})
 
+app.get('/home', async (req, res) => {
+    //should return the ranked list for an individual
+    console.log("GET /rankings/home endpoint hit"); // Verify route hit
+    try {
+        const testQuery = `SELECT 
+                            Users.username AS name,
+                            Restaurants.name AS restaurantInfo,
+                            Restaurants.image_url AS image_url,
+                            Ratings.rating AS rating
+                        FROM 
+                            Ratings
+                        JOIN 
+                            Restaurants ON Ratings.restaurant_id = Restaurants.id
+                        JOIN 
+                            Users ON Ratings.user_id = Users.id;`;
+        // Simplified test query
+        const restaurants = await db.any(testQuery);
+        console.log(restaurants);
+
+        res.render('pages/home', { restaurants, loggedIn: true });
+
+    } catch (error) {
+        console.error("Error with test query:", error);
+        res.status(500).send("Server error with test query");
+    }
+});
 
 /*
 Purpose: add a ranking for a resturant
@@ -237,14 +266,14 @@ Request body:
 }
 */
 app.get('/add-restaurant', (req, res) => {
-    const { name, city } = req.query;
-    res.render('pages/add-restaurant', { name, city, loggedIn: true });
+    const { name, city, image_url } = req.query;
+    res.render('pages/add-restaurant', { name, city, image_url, loggedIn: true });
 });
 
 
 app.post('/ratings/add', async (req, res) => {
     try {
-        const { name, price_rating, food_rating } = req.body;
+        const { name, image_url, price_rating, food_rating } = req.body;
         const user_id = req.session.user.id; // Ensure user session is set
 
         // Ensure required fields are present
@@ -257,9 +286,9 @@ app.post('/ratings/add', async (req, res) => {
         if (!restaurant) {
             // If the restaurant does not exist, add it
             restaurant = await db.one(
-              `INSERT INTO Restaurants (name, rating, total_ratings)
-               VALUES ($1, 0, 0) RETURNING *`,
-              [name]
+              `INSERT INTO Restaurants (name, image_url, rating, total_ratings)
+               VALUES ($1, $2, 0, 0) RETURNING *`,
+              [name, image_url]
             );
         }
 
@@ -274,7 +303,7 @@ app.post('/ratings/add', async (req, res) => {
         if (existingRating) {
             return res.render('pages/discover' ,{ message: 'User has already rated this restaurant' });
         }
-// Calculate the user rating
+        // Calculate the user rating
         const user_rating = calculateUserRating(price_rating, food_rating);
 
         // Add the new rating
@@ -295,9 +324,10 @@ app.post('/ratings/add', async (req, res) => {
             [updatedRating, updatedTotalRatings, restaurant_id]
         );
 
-        res.render({
+        res.render('pages/discover', {
             message: 'Rating added successfully',
-            rating: newRating
+            rating: newRating, 
+            loggedIn: true
         });
 
     } catch (err) {
