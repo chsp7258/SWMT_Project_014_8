@@ -4,16 +4,24 @@
 <div id="hobbies" class ="row">
 
 <div action="/getUserInfo" method="GET">
-        <div class="col">
-            {{#each restaurants}}
-            <div class="card" style="width: 25rem;" id="hobby-card-1">
-                <img src="{{this.image}}" class="card-img-top">
-                <div class="card-body">
-                  <h5 class="card-title">{{this.name}}</h5>
-                  <p class="card-text">{{this.restaurantInfo}}</p>
-                </div>
-            </div>
-            {{/each}}
+  <div class="col">
+      {{#each restaurants}}
+        <div class="card" style="width: 25rem;" id="hobby-card-1">
+          <img src="{{this.image}}" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">{{this.name}}</h5>
+            <p class="card-text">{{this.restaurantInfo}}</p>
+          </div>
         </div>
+      {{/each}}
+    </div>
+  </div>
 </div>
+<div class="container mt-5">
+    <h1 class="text-center">Welcome to the Home Page</h1>
+
+    <div class="d-flex justify-content-center mt-4">
+        <!-- Button to redirect to the restaurant form -->
+        <a href="/add-restaurant" class="btn btn-primary">Add a Restaurant</a>
+    </div>
 </div>

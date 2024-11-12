@@ -1,0 +1,52 @@
+<div class="container mt-5">
+    <h1 class="text-center">Add a Restaurant</h1>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6 bg-light p-4 rounded shadow">
+            <form action="/add-restaurant" method="post">
+                <!-- Restaurant Name -->
+                <div class="form-group mb-3">
+                    <label for="restaurant-name">Restaurant Name</label>
+                    <input type="text" class="form-control" name="restaurantName" id="restaurant-name" required>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group mb-3">
+                    <label for="location">Restaurant Location</label>
+                    <input type="text" class="form-control" name="location" id="location" required>
+                </div>
+
+                <!-- Taste Rating -->
+                <div class="form-group mb-3">
+                    <label for="rating1">Taste Rating (0-5)</label>
+                    <select class="form-control" name="rating1" id="rating1" required>
+                        <option value="" disabled selected>Choose a rating</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                
+                <!-- Cost Rating -->
+                <div class="form-group mb-4">
+                    <label for="rating2">Cost Rating (0-5)</label>
+                    <select class="form-control" name="rating2" id="rating2" required>
+                        <option value="" disabled selected>Choose a rating</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-success w-100">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
