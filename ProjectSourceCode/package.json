@@ -1,5 +1,5 @@
 {
-    "name": "group-project",
+    "name": "Cheap Eats",
     "main": "src/index.js",
     "dependencies": {
       "express": "^4.6.1",

@@ -1,3 +1,4 @@
+
 <!-- Partial for nav bar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
@@ -7,21 +8,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <!-- Home link -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/home">Home</a>
-                </li>
-                <!-- Discover link -->
+                <!-- Home, Discover, and Logout links if logged in -->
                 {{#if loggedIn}}
                     <li class="nav-item">
                         <a class="nav-link" href="/discover">Discover</a>
                     </li>
-                    <!-- Logout link if logged in -->
                     <li class="nav-item">
                         <a class="nav-link" href="/logout">Logout</a>
                     </li>
-                {{else}}
-                    <!-- Login and Register links if not logged in -->
+                    {{else}}
+                    <!-- If NOT logged in, show Login and Register -->
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
                     </li>

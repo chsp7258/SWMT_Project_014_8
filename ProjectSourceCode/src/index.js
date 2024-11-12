@@ -92,7 +92,8 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    res.render('pages/register');
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/register', { loggedIn });
 })
 
 
@@ -166,16 +167,6 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
 });
 
-
-app.get('/discover', (req, res) => {
-    //this should render the discover page and query the ranked list of restaurants, returning them in a variable called "restaurants", per html
-    res.render('pages/discover', {loggedIn: true });
-});
-
-app.get('/home', (req, res) => {
-    res.render('pages/home', {loggedIn: true });
-})
-
 // call to yelp to get info of restaurants
 app.get('/search-restaurant', (req, res) => {
     const { name, city } = req.query;
@@ -206,8 +197,21 @@ app.get('/search-restaurant', (req, res) => {
             console.error('Error fetching data from Yelp API:', error);
             res.render('pages/discover', { message: 'Could not fetch businesses. Please try again later.', loggedIn: true });
         });
+    res.render('pages/logout', {message: "Logged out successfully!"});
+    req.session.destroy();
+  });
 
+
+  app.get('/discover', (req, res) => {
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/discover', { loggedIn });
 });
+
+app.get('/home', (req, res) => {
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/home', { loggedIn });
+});
+
 
 // APIs to interact with backend database
 /* 
@@ -218,6 +222,11 @@ app.get('/rankings/discover', async (req, res) => {
     //can you query these?
     //I'm calling variable restaurants
 });
+
+app.get('/rankings/home', async (req, res) => {
+    //should return the ranked list for an individual
+})
+
 
 /*
 Purpose: add a ranking for a resturant
@@ -250,7 +259,6 @@ app.post('/ratings/add', async (req, res) => {
         if (existingRating.rows.length > 0) {
             return res.status(400).json({ error: 'User has already rated this restaurant' });
         }
-
         // Update restaurant's overall rating and total_ratings
         const currentRestaurant = await client.query(
             'SELECT rating, total_ratings FROM Restaurants WHERE id = $1',
