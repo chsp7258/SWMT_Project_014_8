@@ -206,12 +206,14 @@ app.get('/discover', (req, res) => {
     res.render('pages/discover', { loggedIn });
 });
 
-// app.get('/home', (req, res) => {
-//     const loggedIn = req.session.user ? true : false;
-//     res.render('pages/home', { loggedIn });
-// });
-
-
+app.get('/home', (req, res) => {
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/home', { loggedIn });
+});
+// Route to serve the form
+app.get('/add-restaurant', (req, res) => {
+    res.render('pages/add-restaurant', { loggedIn: req.session.user ? true : false });
+});
 // APIs to interact with backend database
 /* 
 Purpose: get all restaurants and rankings
@@ -255,7 +257,6 @@ app.get('/home', async (req, res) => {
         res.status(500).send("Server error with test query");
     }
 });
-
 /*
 Purpose: add a ranking for a resturant
 Request body: 
@@ -369,8 +370,6 @@ const calculateUserRating = (price_rating, food_rating) => {
 const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
     return (current_rating * total_ratings + user_rating) / (total_ratings + 1);
 };
-
-
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
