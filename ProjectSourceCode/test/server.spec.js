@@ -113,3 +113,29 @@ describe('Testing login API', () => {
     });
 
 });
+
+describe('Testing /ratings/add', () => {
+    it('positive', done => {
+        chai
+            .request(server)
+            .post('/ratings/add')
+            .set('Cookie', 'session_id=validSessionId')
+            .send({name: 'name', image_url: 'url', price_rating: 5, food_rating: 5})
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                done();
+            })
+    })
+})
+
+describe('Testing /ratings/:restaurantId', () => {
+    it('positive', done => {
+        chai
+            .request(server)
+            .post('/ratings/restaurant')
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                done();
+            })
+    })
+})
