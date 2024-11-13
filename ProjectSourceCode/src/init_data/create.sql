@@ -9,6 +9,7 @@ CREATE TABLE Users (
 CREATE TABLE Restaurants (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    image_url VARCHAR(255), -- New column to store the image URL
     rating INTEGER,
     total_ratings INTEGER DEFAULT 0
 );

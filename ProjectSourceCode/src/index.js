@@ -163,7 +163,7 @@ app.use(auth);
 
 
 app.get('/logout', (req, res) => {
-    res.render('pages/logout', { message: "Logged out successfully!" });
+    res.render('pages/logout');
     req.session.destroy();
 });
 
@@ -197,12 +197,11 @@ app.get('/search-restaurant', (req, res) => {
             console.error('Error fetching data from Yelp API:', error);
             res.render('pages/discover', { message: 'Could not fetch businesses. Please try again later.', loggedIn: true });
         });
-    res.render('pages/logout', {message: "Logged out successfully!"});
-    req.session.destroy();
+
   });
 
 
-  app.get('/discover', (req, res) => {
+app.get('/discover', (req, res) => {
     const loggedIn = req.session.user ? true : false;
     res.render('pages/discover', { loggedIn });
 });
@@ -215,7 +214,6 @@ app.get('/home', (req, res) => {
 app.get('/add-restaurant', (req, res) => {
     res.render('pages/add-restaurant', { loggedIn: req.session.user ? true : false });
 });
-    
 // APIs to interact with backend database
 /* 
 Purpose: get all restaurants and rankings
@@ -229,7 +227,36 @@ app.get('/rankings/discover', async (req, res) => {
 app.get('/rankings/home', async (req, res) => {
     //should return the ranked list for an individual
 })
+app.get('/rankings/home', async (req, res) => {
+    //should return the ranked list for an individual
+})
 
+app.get('/home', async (req, res) => {
+    //should return the ranked list for an individual
+    console.log("GET /rankings/home endpoint hit"); // Verify route hit
+    try {
+        const testQuery = `SELECT 
+                            Users.username AS name,
+                            Restaurants.name AS restaurantInfo,
+                            Restaurants.image_url AS image_url,
+                            Ratings.rating AS rating
+                        FROM 
+                            Ratings
+                        JOIN 
+                            Restaurants ON Ratings.restaurant_id = Restaurants.id
+                        JOIN 
+                            Users ON Ratings.user_id = Users.id;`;
+        // Simplified test query
+        const restaurants = await db.any(testQuery);
+        console.log(restaurants);
+
+        res.render('pages/home', { restaurants, loggedIn: true });
+
+    } catch (error) {
+        console.error("Error with test query:", error);
+        res.status(500).send("Server error with test query");
+    }
+});
 /*
 Purpose: add a ranking for a resturant
 Request body: 
@@ -239,54 +266,69 @@ Request body:
     ranking: number
 }
 */
+app.get('/add-restaurant', (req, res) => {
+    const { name, city, image_url } = req.query;
+    res.render('pages/add-restaurant', { name, city, image_url, loggedIn: true });
+});
+
+
 app.post('/ratings/add', async (req, res) => {
     try {
-        const { user_id, restaurant_id, price_rating, food_rating } = req.body;
+        const { name, image_url, price_rating, food_rating } = req.body;
+        const user_id = req.session.user.id; // Ensure user session is set
 
-        // Validate inputs
-        if (!user_id || !restaurant_id || !price_rating || !food_rating) {
+        // Ensure required fields are present
+        if (!user_id || !price_rating || !food_rating || !name) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
-        if (price_rating < 1 || price_rating > 5 || food_rating < 1 || food_rating > 5) {
-            return res.status(400).json({ error: 'Ratings must be between 1 and 5' });
+        // Check if the restaurant already exists
+        let restaurant = await db.oneOrNone('SELECT * FROM Restaurants WHERE name = $1', [name]);
+        if (!restaurant) {
+            // If the restaurant does not exist, add it
+            restaurant = await db.one(
+              `INSERT INTO Restaurants (name, image_url, rating, total_ratings)
+               VALUES ($1, $2, 0, 0) RETURNING *`,
+              [name, image_url]
+            );
         }
 
-        // Check if user has already rated this restaurant
-        const existingRating = await pool.query(
+        const restaurant_id = restaurant.id;
+
+        // Check if the user has already rated this restaurant
+        const existingRating = await db.oneOrNone(
             'SELECT * FROM Ratings WHERE user_id = $1 AND restaurant_id = $2',
             [user_id, restaurant_id]
         );
-
-        if (existingRating.rows.length > 0) {
-            return res.status(400).json({ error: 'User has already rated this restaurant' });
+            // maybe go to home to show that they did? 
+        if (existingRating) {
+            return res.render('pages/discover' ,{ message: 'User has already rated this restaurant' });
         }
-        // Update restaurant's overall rating and total_ratings
-        const currentRestaurant = await client.query(
-            'SELECT rating, total_ratings FROM Restaurants WHERE id = $1',
-            [restaurant_id]
-        );
-        const { rating, total_ratings } = currentRestaurant.rows[0];
+        // Calculate the user rating
         const user_rating = calculateUserRating(price_rating, food_rating);
-        const restaurant_rating = calculateRestaurantRating(rating, total_ratings, user_rating);
 
-        // Add new rating
-        const newRating = await pool.query(
+        // Add the new rating
+        const newRating = await db.one(
             'INSERT INTO Ratings (user_id, restaurant_id, rating) VALUES ($1, $2, $3) RETURNING *',
             [user_id, restaurant_id, user_rating]
         );
 
-        await pool.query(
+        // Update restaurant's overall rating and total ratings count
+        const updatedTotalRatings = restaurant.total_ratings + 1;
+        const updatedRating = calculateRestaurantRating(restaurant.rating, restaurant.total_ratings, user_rating);
+
+        await db.query(
             `UPDATE Restaurants 
              SET rating = $1,
-                total_ratings = total_ratings + 1
-             WHERE id = $2`,
-            [restaurant_rating, restaurant_id]
+                 total_ratings = $2
+             WHERE id = $3`,
+            [updatedRating, updatedTotalRatings, restaurant_id]
         );
 
-        res.json({
+        res.render('pages/discover', {
             message: 'Rating added successfully',
-            rating: newRating.rows[0]
+            rating: newRating, 
+            loggedIn: true
         });
 
     } catch (err) {
