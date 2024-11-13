@@ -4,9 +4,16 @@
   <div class="card p-4 shadow-sm">
     <h2 class="text-center mb-4">Rate {{name}}</h2>
 
+    <!-- Display the restaurant image -->
+    <div class="text-center mb-4">
+      <img src="{{image_url}}" alt="{{name}}" class="img-fluid" style="max-height: 200px;">
+    </div>
+
+
     <form action="/ratings/add" method="POST">
       <!-- Hidden field to pass restaurant name -->
       <input type="hidden" name="name" value="{{name}}">
+      <input type="hidden" name="image_url" value="{{image_url}}">
 
       <div class="form-group mb-3">
         <label for="restaurantName" class="form-label">Restaurant Name</label>

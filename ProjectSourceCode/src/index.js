@@ -301,7 +301,7 @@ app.post('/ratings/add', async (req, res) => {
         );
             // maybe go to home to show that they did? 
         if (existingRating) {
-            return res.render('pages/discover' ,{ message: 'User has already rated this restaurant' });
+            return res.render('pages/discover' ,{ message: 'User has already rated this restaurant' , loggedIn: true});
         }
         // Calculate the user rating
         const user_rating = calculateUserRating(price_rating, food_rating);
