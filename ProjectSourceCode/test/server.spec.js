@@ -31,14 +31,6 @@ describe('Server!', () => {
 
 // ********************************************************************************
 
-// Example Positive Testcase :
-// API: /add_user
-// Input: {id: 5, name: 'John Doe', dob: '2020-02-20'}
-// Expect: res.status == 200 and res.body.message == 'Success'
-// Result: This test case should pass and return a status 200 along with a "Success" message.
-// Explanation: The testcase will call the /add_user API with the following input
-// and expects the API to return a status of 200 along with the "Success" message.
-
 describe('Testing register API', () => {
     it('positive : /register', done => {
         chai
@@ -51,24 +43,13 @@ describe('Testing register API', () => {
             });
     });
 
-
-    // Refer above for the positive testcase implementation
-
-    // Example Negative Testcase :
-    // API: /add_user
-    // Input: {id: 5, name: 10, dob: '2020-02-20'}
-    // Expect: res.status == 400 and res.body.message == 'Invalid input'
-    // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
-    // Explanation: The testcase will call the /add_user API with the following invalid inputs
-    // and expects the API to return a status of 400 along with the "Invalid input" message.
     it('negative : /register. Invalid username format', done => {
         chai
             .request(server)
             .post('/register')
-            .send({ username: '!makr', password: 'short' })
+            .send({ username: '!', password: '1' })
             .end((err, res) => {
                 expect(res).to.have.status(400);
-                expect(res.body.message).to.equals('Invalid input');
                 done();
             });
     });
@@ -104,4 +85,31 @@ describe('Testing Redirect', () => {
         done();
       });
   });
+});
+
+
+
+describe('Testing login API', () => {
+    it('positive : /login', done => {
+        chai
+            .request(server)
+            .post('/login')
+            .send({ username: 'user', password: 'password' })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                done();
+            });
+    });
+
+    it('negative : /login', done => {
+        chai
+            .request(server)
+            .post('/login')
+            .send({ username: 'asdf', password: 'asdf' })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                done();
+            });
+    });
+
 });

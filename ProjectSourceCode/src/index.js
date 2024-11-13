@@ -80,8 +80,8 @@ app.use(
 
 
 app.get('/welcome', (req, res) => {
-    res.json({status: 'success', message: 'Welcome!'});
-  });
+    res.json({ status: 'success', message: 'Welcome!' });
+});
 
 app.get('/', (req, res) => {
     res.redirect('/login');
@@ -92,47 +92,31 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    res.render('pages/register');
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/register', { loggedIn });
 })
 
 
-// app.post('/register', async (req, res) => {
-//     const hash = await bcrypt.hash(req.body.password, 10);
-//     const username = req.body.username;
-
-//     const query = 'insert into users (username, password) values($1, $2);';
-
-//     db.none(query, [username, hash])
-//         .then(data => {
-//             res.redirect('/login');
-//         })
-
-//         .catch(err => {
-//             console.log(err);
-//             res.redirect('/register');
-//         });
-// });
-
-// for testing 
 app.post('/register', async (req, res) => {
-
-    const {username, password} = req.body
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const username = req.body.username;
 
     if (username.includes('!')) {
-        return res.status(400).json({ message: 'Invalid input'});
+        return res.status(400).render('pages/register', {message: 'Username cannot contain special characters like "!"'});
     }
-    try {
-        const hash = await bcrypt.hash(password, 10);
-        const query = 'insert into users (username, password) values($1, $2);';
 
-        await db.none(query, [username, hash]);
-        res.status(200).redirect('/login');
-    } catch (err) {
-        console.error('Error during registration:', err);
-        res.redirect('/register');
-    }
+    const query = 'insert into users (username, password) values($1, $2);';
+
+    db.none(query, [username, hash])
+        .then(data => {
+            res.redirect('/login');
+        })
+
+        .catch(err => {
+            console.log(err);
+            res.redirect('/register');
+        });
 });
-
 
 
 app.post('/login', async (req, res) => {
@@ -143,10 +127,10 @@ app.post('/login', async (req, res) => {
         const user = await db.oneOrNone(query, [username]);
 
         if (!user) {
-            return res.redirect('/register');
+            return res.status(400).render('pages/login', { message: "Username not found. Please try again or register." });
         }
 
-        const match = await bcrypt.compare(req.body.password, user.password);
+        const match = await bcrypt.compare(password, user.password);
 
         if (!match) {
             return res.render('pages/login', { message: "Incorrect username or password please try again" });
@@ -158,9 +142,9 @@ app.post('/login', async (req, res) => {
         // console.log(req.session.user);
         res.redirect('/discover');
 
-
     } catch (error) {
-        console.log(err);
+        console.log(error);
+        res.status(400);
     };
 });
 
@@ -178,23 +162,98 @@ const auth = (req, res, next) => {
 app.use(auth);
 
 
-
-app.get('/discover', (req, res) => {
-    //this should render the discover page and query the ranked list of restaurants, returning them in a variable called "restaurants", per html
-    res.render('pages/discover');
+app.get('/logout', (req, res) => {
+    res.render('pages/logout', { message: "Logged out successfully!" });
+    req.session.destroy();
 });
 
-app.get('/getRestaurants', (req, res) => {
-    //should return the info for a particular resturant based on queried name and render this on the page
+// call to yelp to get info of restaurants
+app.get('/search-restaurant', (req, res) => {
+    const { name, city } = req.query;
 
+    axios({
+        url: `https://api.yelp.com/v3/businesses/search`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${process.env.API_KEY.trim()}`,
+            'Accept-Encoding': 'application/json',
+        },
+        params: {
+            term: name,    // Restaurant name
+            location: city, // City specified by the user
+            limit: 3       // Limit results for simplicity
+        },
+    })
+        .then((response) => {
+            const restaurants = response.data.businesses;
+            if (restaurants.length === 0) {
+                res.render('pages/discover', { message: 'No matching restaurants found. Please enter a valid restaurant name.', loggedIn: true });
+            } else {
+                res.render('pages/discover', { restaurants,  loggedIn: true });
+            }
+        })
+
+        .catch(error => {
+            console.error('Error fetching data from Yelp API:', error);
+            res.render('pages/discover', { message: 'Could not fetch businesses. Please try again later.', loggedIn: true });
+        });
+
+  });
+
+
+  app.get('/discover', (req, res) => {
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/discover', { loggedIn });
 });
+
+// app.get('/home', (req, res) => {
+//     const loggedIn = req.session.user ? true : false;
+//     res.render('pages/home', { loggedIn });
+// });
+
 
 // APIs to interact with backend database
 /* 
 Purpose: get all restaurants and rankings
 */
 app.get('/rankings/discover', async (req, res) => {
+    //I'm trying to access name, image, info
+    //can you query these?
+    //I'm calling variable restaurants
+});
 
+app.get('/rankings/home', async (req, res) => {
+    //should return the ranked list for an individual
+})
+app.get('/rankings/home', async (req, res) => {
+    //should return the ranked list for an individual
+})
+
+app.get('/home', async (req, res) => {
+    //should return the ranked list for an individual
+    console.log("GET /rankings/home endpoint hit"); // Verify route hit
+    try {
+        const testQuery = `SELECT 
+                            Users.username AS name,
+                            Restaurants.name AS restaurantInfo,
+                            Restaurants.image_url AS image_url,
+                            Ratings.rating AS rating
+                        FROM 
+                            Ratings
+                        JOIN 
+                            Restaurants ON Ratings.restaurant_id = Restaurants.id
+                        JOIN 
+                            Users ON Ratings.user_id = Users.id;`;
+        // Simplified test query
+        const restaurants = await db.any(testQuery);
+        console.log(restaurants);
+
+        res.render('pages/home', { restaurants, loggedIn: true });
+
+    } catch (error) {
+        console.error("Error with test query:", error);
+        res.status(500).send("Server error with test query");
+    }
 });
 
 /*
@@ -206,9 +265,110 @@ Request body:
     ranking: number
 }
 */
-app.post('/rankings/add', async (req, res) => {
-
+app.get('/add-restaurant', (req, res) => {
+    const { name, city, image_url } = req.query;
+    res.render('pages/add-restaurant', { name, city, image_url, loggedIn: true });
 });
+
+
+app.post('/ratings/add', async (req, res) => {
+    try {
+        const { name, image_url, price_rating, food_rating } = req.body;
+        const user_id = req.session.user.id; // Ensure user session is set
+
+        // Ensure required fields are present
+        if (!user_id || !price_rating || !food_rating || !name) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Check if the restaurant already exists
+        let restaurant = await db.oneOrNone('SELECT * FROM Restaurants WHERE name = $1', [name]);
+        if (!restaurant) {
+            // If the restaurant does not exist, add it
+            restaurant = await db.one(
+              `INSERT INTO Restaurants (name, image_url, rating, total_ratings)
+               VALUES ($1, $2, 0, 0) RETURNING *`,
+              [name, image_url]
+            );
+        }
+
+        const restaurant_id = restaurant.id;
+
+        // Check if the user has already rated this restaurant
+        const existingRating = await db.oneOrNone(
+            'SELECT * FROM Ratings WHERE user_id = $1 AND restaurant_id = $2',
+            [user_id, restaurant_id]
+        );
+            // maybe go to home to show that they did? 
+        if (existingRating) {
+            return res.render('pages/discover' ,{ message: 'User has already rated this restaurant' });
+        }
+        // Calculate the user rating
+        const user_rating = calculateUserRating(price_rating, food_rating);
+
+        // Add the new rating
+        const newRating = await db.one(
+            'INSERT INTO Ratings (user_id, restaurant_id, rating) VALUES ($1, $2, $3) RETURNING *',
+            [user_id, restaurant_id, user_rating]
+        );
+
+        // Update restaurant's overall rating and total ratings count
+        const updatedTotalRatings = restaurant.total_ratings + 1;
+        const updatedRating = calculateRestaurantRating(restaurant.rating, restaurant.total_ratings, user_rating);
+
+        await db.query(
+            `UPDATE Restaurants 
+             SET rating = $1,
+                 total_ratings = $2
+             WHERE id = $3`,
+            [updatedRating, updatedTotalRatings, restaurant_id]
+        );
+
+        res.render('pages/discover', {
+            message: 'Rating added successfully',
+            rating: newRating, 
+            loggedIn: true
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+/*
+Purpose: getting ratings for a specific restaurant id with params
+*/
+app.get('/ratings/:restaurantId', async (req, res) => {
+    try {
+        const { restaurantId } = req.params;
+
+        // Get restaurant details with its current rating
+        const restaurant = await pool.query(
+            'SELECT name, rating, total_ratings FROM Restaurants WHERE id = $1',
+            [restaurantId]
+        );
+
+        if (restaurant.rows.length === 0) {
+            return res.status(404).json({ error: 'Restaurant not found' });
+        }
+
+        res.json(restaurant.rows[0]);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Helper Functions
+const calculateUserRating = (price_rating, food_rating) => {
+    return (price_rating + food_rating) / 2;
+};
+
+const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
+    return (current_rating * total_ratings + user_rating) / (total_ratings + 1);
+};
 
 
 // *****************************************************
