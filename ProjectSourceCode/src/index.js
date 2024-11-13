@@ -163,7 +163,7 @@ app.use(auth);
 
 
 app.get('/logout', (req, res) => {
-    res.render('pages/logout', { message: "Logged out successfully!" });
+    res.render('pages/logout');
     req.session.destroy();
 });
 
@@ -201,7 +201,7 @@ app.get('/search-restaurant', (req, res) => {
   });
 
 
-  app.get('/discover', (req, res) => {
+app.get('/discover', (req, res) => {
     const loggedIn = req.session.user ? true : false;
     res.render('pages/discover', { loggedIn });
 });
