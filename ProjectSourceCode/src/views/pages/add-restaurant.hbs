@@ -1,0 +1,41 @@
+{{> message}}
+
+<div class="container mt-5">
+  <div class="card p-4 shadow-sm">
+    <h2 class="text-center mb-4">Rate {{name}}</h2>
+
+    <form action="/ratings/add" method="POST">
+      <!-- Hidden field to pass restaurant name -->
+      <input type="hidden" name="name" value="{{name}}">
+
+      <div class="form-group mb-3">
+        <label for="restaurantName" class="form-label">Restaurant Name</label>
+        <input type="text" id="restaurantName" class="form-control" value="{{name}}" readonly>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="food_rating" class="form-label">Food Rating (1-5)</label>
+        <select id="food_rating" name="food_rating" class="form-control" required>
+          <option value="5">5-Excellent</option>
+          <option value="4">4-Good</option>
+          <option value="3">3-Average</option>
+          <option value="2">2-Fair</option>
+          <option value="1">1-Poor</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="price_rating" class="form-label">Price Rating (1-5)</label>
+        <select id="price_rating" name="price_rating" class="form-control" required>
+          <option value="1">1-Cheapest</option>
+          <option value="2">2-Affordable</option>
+          <option value="3">3-Moderate</option>
+          <option value="4">4-Expensive</option>
+          <option value="5">5-Most Expensive</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Submit Rating</button>
+    </form>
+  </div>
+</div>
