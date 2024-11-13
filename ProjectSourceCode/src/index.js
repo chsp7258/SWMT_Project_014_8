@@ -184,20 +184,16 @@ app.get('/discover', (req, res) => {
     res.render('pages/discover');
 });
 
+app.get('/getRestaurants', (req, res) => {
+    //should return the info for a particular resturant based on queried name and render this on the page
 
+});
 
 // APIs to interact with backend database
 /* 
 Purpose: get all restaurants and rankings
 */
 app.get('/rankings/discover', async (req, res) => {
-    //can you store this a value called restaurants?
-    //rn I'm trying to use name, image, address, website, rating
-
-});
-
-app.get('/getRestaurant', (req, res) => {
-    //should return the info for a particular resturant based on queried name and render this on the page
 
 });
 
