@@ -9,29 +9,17 @@ CREATE TABLE Users (
 CREATE TABLE Restaurants (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    current_rank INTEGER,
-    total_rankings INTEGER DEFAULT 0,
+    image_url VARCHAR(255), -- New column to store the image URL
+    rating INTEGER,
+    total_ratings INTEGER DEFAULT 0
 );
 
-CREATE TABLE User_to_Rankings (
+-- Create Ratings Table
+CREATE TABLE Ratings (
+    id SERIAL PRIMARY KEY,
     user_id INT,
     restaurant_id INT,
-    ranking VARCHAR(50),
-    PRIMARY KEY (user_id, restaurant_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id) ON DELETE CASCADE
+    rating INTEGER,
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurants(id)
 );
-
-CREATE TABLE Restaurant_to_Rankings (
-    restaurant_id INT,
-    ranking int,
-    FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id) ON DELETE CASCADE
-);
-
-
-/* for discover, I'm trying to access these variables for restaurants (hoping you can include them in the databse):
-- name
-- image
-- rating 
-- website
-- button for more details? (maybe all the reviews, rankings, etc.)

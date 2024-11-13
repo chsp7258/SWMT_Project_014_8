@@ -1,0 +1,5 @@
+User Acceptance Testing:
+--------------------------------------------------------------------------------------------------------------------------------------------
+1) Test Add Resuraunt Functionality:
+  - When a User clicks 'Add Review' on the Navigation Bar for a resuraunt on the discover page it should render a review form on a new page. 
+  - 
