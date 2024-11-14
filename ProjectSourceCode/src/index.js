@@ -225,26 +225,13 @@ app.get('/discover', (req, res) => {
 /* 
 Purpose: get all restaurants and rankings
 */
-app.get('/rankings/discover', async (req, res) => {
-    //I'm trying to access name, image, info
-    //can you query these?
-    //I'm calling variable restaurants
-});
-
-app.get('/rankings/home', async (req, res) => {
-    //should return the ranked list for an individual
-})
-app.get('/rankings/home', async (req, res) => {
-    //should return the ranked list for an individual
-})
 
 app.get('/home', async (req, res) => {
     //should return the ranked list for an individual
     console.log("GET /rankings/home endpoint hit"); // Verify route hit
     try {
         const testQuery = `SELECT 
-                            Users.username AS name,
-                            Restaurants.name AS restaurantInfo,
+                            Restaurants.name AS name,
                             Restaurants.image_url AS image_url,
                             Ratings.rating AS rating
                         FROM 
@@ -280,6 +267,28 @@ Request body:
 app.get('/add-restaurant', (req, res) => {
     const { name, city, image_url } = req.query;
     res.render('pages/add-restaurant', { name, city, image_url, loggedIn: true });
+});
+
+/*
+Purpose: get the top restaruants in boulder
+*/
+app.get('/rankings/discover/', async (req, res) => {
+    try {
+        const n = int(req.query.n) || 10;
+
+        await db.query(
+            `
+            SELECT name, image_url, rating
+            FROM Restaurants
+            ORDER BY rating DESC LIMIT $1
+            `, [n]
+        )
+        
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 
@@ -375,7 +384,17 @@ app.get('/ratings/:restaurantId', async (req, res) => {
 
 // Helper Functions
 const calculateUserRating = (price_rating, food_rating) => {
-    return (price_rating + food_rating) / 2;
+    const adjustedValue = 6 - price_rating;
+
+    // Define weights
+    const tasteWeight = 0.7;
+    const valueWeight = 0.3;
+
+    // Calculate weighted average
+    const overallRating = (food_rating * tasteWeight) + (adjustedValue * valueWeight);
+
+    // Optionally round to 1 decimal place
+    return Math.round(overallRating *2);
 };
 
 const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
