@@ -234,8 +234,7 @@ app.get('/home', async (req, res) => {
     console.log("GET /rankings/home endpoint hit"); // Verify route hit
     try {
         const testQuery = `SELECT 
-                            Users.username AS name,
-                            Restaurants.name AS restaurantInfo,
+                            Restaurants.name AS name,
                             Restaurants.image_url AS image_url,
                             Ratings.rating AS rating
                         FROM 
