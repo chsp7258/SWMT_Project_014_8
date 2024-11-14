@@ -257,7 +257,10 @@ app.get('/home', async (req, res) => {
         const restaurants = await db.any(testQuery);
         console.log(restaurants);
 
-        res.render('pages/home', { restaurants, loggedIn: true });
+        res.render('pages/home', {restaurants, 
+                                loggedIn: true, 
+                                username: req.session.user ? req.session.user.username : null  // Ensure user is logged in
+        });
 
     } catch (error) {
         console.error("Error with test query:", error);
