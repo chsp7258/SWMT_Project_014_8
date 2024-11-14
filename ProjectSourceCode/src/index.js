@@ -372,7 +372,17 @@ app.get('/ratings/:restaurantId', async (req, res) => {
 
 // Helper Functions
 const calculateUserRating = (price_rating, food_rating) => {
-    return (price_rating + food_rating) / 2;
+    const adjustedValue = 6 - price_rating;
+
+    // Define weights
+    const tasteWeight = 0.7;
+    const valueWeight = 0.3;
+
+    // Calculate weighted average
+    const overallRating = (food_rating * tasteWeight) + (adjustedValue * valueWeight);
+
+    // Optionally round to 1 decimal place
+    return Math.round(overallRating );
 };
 
 const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
