@@ -1,5 +1,64 @@
 User Acceptance Testing:
 --------------------------------------------------------------------------------------------------------------------------------------------
-1) Test Add Resuraunt Functionality:
-  - When a User clicks 'Add Review' on the Navigation Bar for a resuraunt on the discover page it should render a review form on a new page. 
-  - 
+1)  Test Case 1: Successful Restaurant Search and Display of Results
+    Description: Verify that the Discover page allows users to search for restaurants by entering a name and location, with results displayed for Boulder/close area restaurants.
+
+    Test Data:
+    Restaurant Name: "Buff Restaurant"
+    Location: "Boulder"
+
+    Steps:
+    Navigate to the Discover page.
+    In the search field, enter the restaurant name: "Buff Restaurant."
+    Enter the location: "Boulder."
+    Click the "Search" button.
+
+    Expected Results:
+    The system displays a list of 3-5 restaurants matching the search criteria in or around Boulder.
+    Each restaurant in the results shows the name, image, and rating from yelp(if available).
+    An "Add Rating" button is displayed next to each restaurant.
+
+
+
+2)  Test Case 2: Handling Invalid Restaurant Name
+    Description: Verify that an invalid or nonexistent restaurant name entered in the search shows an appropriate error message.
+
+    Test Data:
+    Restaurant Name: "Invalid Restaurant Name" like "dklhafjkd"
+    Location: "Boulder"
+
+    Steps:
+    On the Discover page, enter "Invalid Restaurant Name" in the restaurant name field.
+    Enter "Boulder" in the location field.
+    Click the "Search" button.
+
+    Expected Results:
+    The system displays an error message: "No matching restaurants found. Please enter a valid restaurant name." or something of the sorts
+    No results are displayed.
+
+    Acceptance Criteria
+    Restaurant Search: Users can enter valid restaurant names and locations, and the system displays accurate results within the specified location (Boulder).
+    Add Rating: Users can rate food and price, and the ratings are stored in the database with confirmation feedback provided.
+    Error Handling for Invalid Entries: Users receive clear feedback when entering an invalid restaurant name or location.
+
+
+
+3)  Test Case 3: Adding a Rating for a Restaurant
+    Description: Verify that users can click "Add Rating" next to a restaurant, navigate to a rating page, where restaurnat name is already in input form and has to input submit ratings for food and price.
+
+    Test Data:
+    Restaurant Name in Search: "Oak at Fourteenth"
+    Location: "Boulder"
+    Food Rating: 4 (Good)
+    Price Rating: 3 (Moderate)
+
+    Steps:
+    Perform a restaurant search on the Discover page by entering "Oak at Fourteenth" as the restaurant name and "Boulder" as the location.
+    In the displayed search results, click the "Add Rating" button next to "Oak at Fourteenth."
+    On the rating page, reastaurant name should already be inputed, enter "4" for Food Rating and "3" for Price Rating.
+    Submit the form by clicking the "Submit Rating" button.
+
+    Expected Results:
+    The system saves the ratings to the database, associated with the correct restaurant and user.
+    A success message displays: "Rating added successfully."
+    User is redirected back to the Discover page or home page.
