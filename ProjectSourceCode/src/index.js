@@ -235,7 +235,7 @@ app.get('/home', async (req, res) => {
         const restaurants = await db.any(testQuery);
         console.log(restaurants);
 
-        res.render('pages/home', { restaurants, loggedIn: true });
+        res.render('pages/home', { restaurants, loggedIn: true});
 
     } catch (error) {
         console.error("Error with test query:", error);
