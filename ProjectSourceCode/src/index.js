@@ -98,24 +98,35 @@ app.get('/register', (req, res) => {
 
 
 app.post('/register', async (req, res) => {
-    const hash = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
+    const password = req.body.password;
 
+    // Check if username contains special characters
     if (username.includes('!')) {
-        return res.status(400).render('pages/register', {message: 'Username cannot contain special characters like "!"'});
+        return res.status(400).render('pages/register', { message: 'Username cannot contain special characters like "!"' });
     }
 
-    const query = 'insert into users (username, password) values($1, $2);';
+    try {
+        // Check if the username already exists
+        const userExists = await db.oneOrNone('SELECT id FROM users WHERE username = $1;', [username]);
 
-    db.none(query, [username, hash])
-        .then(data => {
-            res.redirect('/login');
-        })
+        if (userExists) {
+            return res.status(400).render('pages/register', { message: 'Username is already taken. Please choose another one.' });
+        }
 
-        .catch(err => {
-            console.log(err);
-            res.redirect('/register');
-        });
+        // Hash the password
+        const hash = await bcrypt.hash(password, 10);
+
+        // Insert new user
+        const query = 'INSERT INTO users (username, password) VALUES ($1, $2);';
+        await db.none(query, [username, hash]);
+
+        // Redirect to login page after successful registration
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.status(500).render('pages/register', { message: 'An error occurred. Please try again.' });
+    }
 });
 
 
@@ -200,7 +211,6 @@ app.get('/search-restaurant', (req, res) => {
 
   });
 
-
 app.get('/discover', (req, res) => {
     const loggedIn = req.session.user ? true : false;
     res.render('pages/discover', { loggedIn });
@@ -210,7 +220,6 @@ app.get('/discover', (req, res) => {
 //     const loggedIn = req.session.user ? true : false;
 //     res.render('pages/home', { loggedIn });
 // });
-
 
 // APIs to interact with backend database
 /* 
@@ -382,7 +391,7 @@ const calculateUserRating = (price_rating, food_rating) => {
     const overallRating = (food_rating * tasteWeight) + (adjustedValue * valueWeight);
 
     // Optionally round to 1 decimal place
-    return Math.round(overallRating );
+    return Math.round(overallRating *2);
 };
 
 const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
