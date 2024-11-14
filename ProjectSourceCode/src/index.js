@@ -216,18 +216,6 @@ app.get('/discover', (req, res) => {
 /* 
 Purpose: get all restaurants and rankings
 */
-app.get('/rankings/discover', async (req, res) => {
-    //I'm trying to access name, image, info
-    //can you query these?
-    //I'm calling variable restaurants
-});
-
-app.get('/rankings/home', async (req, res) => {
-    //should return the ranked list for an individual
-})
-app.get('/rankings/home', async (req, res) => {
-    //should return the ranked list for an individual
-})
 
 app.get('/home', async (req, res) => {
     //should return the ranked list for an individual
@@ -267,6 +255,28 @@ Request body:
 app.get('/add-restaurant', (req, res) => {
     const { name, city, image_url } = req.query;
     res.render('pages/add-restaurant', { name, city, image_url, loggedIn: true });
+});
+
+/*
+Purpose: get the top restaruants in boulder
+*/
+app.get('/rankings/discover/', async (req, res) => {
+    try {
+        const n = int(req.query.n) || 10;
+
+        await db.query(
+            `
+            SELECT name, image_url, rating
+            FROM Restaurants
+            ORDER BY rating DESC LIMIT $1
+            `, [n]
+        )
+        
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 
