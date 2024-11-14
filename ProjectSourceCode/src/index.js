@@ -382,7 +382,7 @@ const calculateUserRating = (price_rating, food_rating) => {
     const overallRating = (food_rating * tasteWeight) + (adjustedValue * valueWeight);
 
     // Optionally round to 1 decimal place
-    return Math.round(overallRating );
+    return Math.round(overallRating *2);
 };
 
 const calculateRestaurantRating = (current_rating, total_ratings, user_rating) => {
