@@ -151,7 +151,7 @@ app.post('/login', async (req, res) => {
         req.session.save();
 
         // console.log(req.session.user);
-        res.redirect('/discover');
+        res.redirect('/explore');
 
     } catch (error) {
         console.log(error);

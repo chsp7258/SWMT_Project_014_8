@@ -1,5 +1,6 @@
 <div class="container">
-    <h1 class="title">Top Rated Restaurants in Boulder</h1>
+    <div class="explore-bg">
+    <h1 class="title">Top Affordable Restaurants in Boulder</h1>
     {{#if places}}
     <div class="restaurant-list">
         {{#each places}}
@@ -18,14 +19,16 @@
     <p class="no-restaurants">No restaurants available at this time. Please check back later.</p>
     {{/if}}
 </div>
-
+</di>
 <style>
     .container {
         max-width: 900px;
         margin: 0 auto;
-        padding: 20px;
         font-family: Arial, sans-serif;
         color: #333;
+    }
+    .explore-bg{
+        padding: 20px;
     }
     .title {
         text-align: center;
