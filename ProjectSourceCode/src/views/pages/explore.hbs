@@ -1,79 +1,85 @@
-<div class="container">
-    <h1 class="title">Top Rated Restaurants in Boulder</h1>
-    {{#if places}}
-    <div class="restaurant-list">
-        {{#each places}}
-        <div class="restaurant-card">
-            <img src="{{image_url}}" alt="{{name}}" class="restaurant-image">
-            <div class="restaurant-info">
-                <h2 class="restaurant-name">{{name}}</h2>
-                <p class="restaurant-rating">⭐ Rating: {{rating}}</p>
-                <p class="restaurant-total-ratings">{{total_ratings}} reviews</p>
-                <a href="/add-restaurant?name={{this.name}}&city={{this.location.city}}&image_url={{this.image_url}}" class="btn btn-outline-primary btn-sm">Add Rating</a>
+<div style="overflow-y:scroll;" >
+  <div class="bg-container">
+    <div class="container mt-5 pt-5"> 
+            <div class="container">
+                <h1 class="title">Top Rated Restaurants in Boulder</h1>
+                {{#if places}}
+                <div class="restaurant-list">
+                    {{#each places}}
+                    <div class="restaurant-card">
+                        <img src="{{image_url}}" alt="{{name}}" class="restaurant-image">
+                        <div class="restaurant-info">
+                            <h2 class="restaurant-name">{{name}}</h2>
+                            <p class="restaurant-rating">⭐ Rating: {{rating}}</p>
+                            <p class="restaurant-total-ratings">{{total_ratings}} reviews</p>
+                            <a href="/add-restaurant?name={{this.name}}&city={{this.location.city}}&image_url={{this.image_url}}" class="btn btn-outline-primary btn-sm">Add Rating</a>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <p class="no-restaurants">No restaurants available at this time. Please check back later.</p>
+                {{/if}}
             </div>
-        </div>
-        {{/each}}
-    </div>
-    {{else}}
-    <p class="no-restaurants">No restaurants available at this time. Please check back later.</p>
-    {{/if}}
-</div>
 
-<style>
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-        color: #333;
-    }
-    .title {
-        text-align: center;
-        font-size: 2em;
-        color: #3b3b3b;
-        margin-bottom: 20px;
-    }
-    .restaurant-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-    }
-    .restaurant-card {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-    }
-    .restaurant-card:hover {
-        transform: scale(1.05);
-    }
-    .restaurant-image {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-    }
-    .restaurant-info {
-        padding: 15px;
-    }
-    .restaurant-name {
-        font-size: 1.5em;
-        margin: 0;
-        color: #2c3e50;
-    }
-    .restaurant-rating {
-        font-size: 1em;
-        color: #f39c12;
-        margin-top: 5px;
-    }
-    .restaurant-total-ratings {
-        font-size: 0.9em;
-        color: #7f8c8d;
-    }
-    .no-restaurants {
-        text-align: center;
-        font-size: 1.2em;
-        color: #e74c3c;
-    }
-</style>
+            <style>
+                .container {
+                    max-width: 900px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    font-family: Arial, sans-serif;
+                    color: #333;
+                }
+                .title {
+                    text-align: center;
+                    font-size: 2em;
+                    color: #3b3b3b;
+                    margin-bottom: 20px;
+                }
+                .restaurant-list {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 20px;
+                }
+                .restaurant-card {
+                    background-color: #f9f9f9;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    transition: transform 0.3s ease;
+                }
+                .restaurant-card:hover {
+                    transform: scale(1.05);
+                }
+                .restaurant-image {
+                    width: 100%;
+                    height: 180px;
+                    object-fit: cover;
+                }
+                .restaurant-info {
+                    padding: 15px;
+                }
+                .restaurant-name {
+                    font-size: 1.5em;
+                    margin: 0;
+                    color: #2c3e50;
+                }
+                .restaurant-rating {
+                    font-size: 1em;
+                    color: #f39c12;
+                    margin-top: 5px;
+                }
+                .restaurant-total-ratings {
+                    font-size: 0.9em;
+                    color: #7f8c8d;
+                }
+                .no-restaurants {
+                    text-align: center;
+                    font-size: 1.2em;
+                    color: #e74c3c;
+                }
+            </style>
+        </div>
+    </div>
+</div>
