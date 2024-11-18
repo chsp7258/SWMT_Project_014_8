@@ -1,9 +1,18 @@
 {{> message}}
-
+<div class="image-container">
+  <div class="image">
+    <div style="background-image: url('https://s3-media4.fl.yelpcdn.com/bphoto/ddMGP_RpJYhKje5qZ8qugQ/o.jpg');"
+      class="image-slide active"></div>
+  </div>
+  <div class="image-overlay">
+    <h1>Find the Best Cheap Eats</h1>
+    <p>Discover amazing restaurants in your city!</p>
+  </div>
+</div>
 <!-- views/pages/add-restaurant.hbs -->
-<div style="overflow-y:scroll;" >
-  <div class="bg-container">
-    <div class="container mt-5 pt-5"> 
+<div style="overflow-y:scroll;">
+  <div class="discover-container">
+    <div class="container mt-5 pt-5">
       <div class="container mt-5">
         <div class="card p-4 shadow-sm">
           <h1 class="text-center mb-4">Add a New Restaurant</h1>
@@ -12,7 +21,8 @@
           <form id="searchForm" method="GET" action="/search-restaurant">
             <div class="form-group mb-3">
               <label for="searchName" class="form-label">Restaurant Name</label>
-              <input type="text" id="searchName" name="name" class="form-control" placeholder="Enter restaurant name" required>
+              <input type="text" id="searchName" name="name" class="form-control" placeholder="Enter restaurant name"
+                required>
             </div>
             <div class="form-group mb-3">
               <label for="city" class="form-label">City</label>
@@ -30,7 +40,8 @@
             {{#each restaurants}}
             <li class="list-group-item d-flex align-items-center">
               <div>
-                <img src="{{this.image_url}}" alt="{{this.name}}" style="width: 80px; height: auto; border-radius: 8px; margin-right: 15px;">
+                <img src="{{this.image_url}}" alt="{{this.name}}"
+                  style="width: 80px; height: auto; border-radius: 8px; margin-right: 15px;">
               </div>
               <div>
                 <h5 class="mb-1">{{this.name}}</h5>
@@ -39,7 +50,8 @@
                   <strong>Yelp Rating:</strong> {{this.rating}}
                 </p>
                 <!-- Pass restaurant name and city as query parameters to the Add Rating page -->
-                <a href="/add-restaurant?name={{this.name}}&city={{this.location.city}}&image_url={{this.image_url}}" class="btn btn-outline-primary btn-sm">Add Rating</a>
+                <a href="/add-restaurant?name={{this.name}}&city={{this.location.city}}&image_url={{this.image_url}}"
+                  class="btn btn-outline-primary btn-sm">Add Rating</a>
               </div>
             </li>
             {{/each}}
