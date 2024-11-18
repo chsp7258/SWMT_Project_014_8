@@ -269,27 +269,33 @@ app.get('/add-restaurant', (req, res) => {
     res.render('pages/add-restaurant', { name, city, image_url, loggedIn: true });
 });
 
+// app.get('/explore', (req, res) => {
+//     res.render('pages/explore');
+// });
+
 /*
 Purpose: get the top restaruants in boulder
 */
-app.get('/rankings/discover/', async (req, res) => {
+app.get('/explore', async (req, res) => {
     try {
-        const n = int(req.query.n) || 10;
-
-        await db.query(
+        // Fetch top 10 restaurants
+        const places = await db.query(
             `
-            SELECT name, image_url, rating
+            SELECT *
             FROM Restaurants
-            ORDER BY rating DESC LIMIT $1
-            `, [n]
-        )
-        
-        res.status(200).json(result.rows);
+            ORDER BY rating DESC
+            LIMIT $1;
+            `, [20]
+        );
+        console.log({places});
+        // Render the explore page and pass the data
+        res.render('pages/explore', { places , loggedIn: true});
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
 });
+
 
 
 app.post('/ratings/add', async (req, res) => {
