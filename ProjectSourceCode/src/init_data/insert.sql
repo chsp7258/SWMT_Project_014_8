@@ -13,7 +13,7 @@ INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('West E
 INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Boulder Dushanbe Teahouse', 'https://s3-media2.fl.yelpcdn.com/bphoto/Dt8-WfPMHDzQeCYpNf1UoA/o.jpg', 6, 4);
 INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Frasca Food and Wine', 'https://s3-media2.fl.yelpcdn.com/bphoto/13Pd84n915VYWHUjX-2ZVA/o.jpg', 10, 2);
 INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Basta', 'https://s3-media4.fl.yelpcdn.com/bphoto/z_r00I5nFxaK2vFAVIbSLw/o.jpg', 6, 1);
-INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Spruce Farm & Fish', 'https://s3-media3.fl.yelpcdn.com/bphoto/OApVmhtIlOmwEmLmH3h1KA/o.jpg', 73, 2);
+INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Spruce Farm & Fish', 'https://s3-media3.fl.yelpcdn.com/bphoto/OApVmhtIlOmwEmLmH3h1KA/o.jpg', 7, 2);
 INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Bartaco Boulder', 'https://s3-media1.fl.yelpcdn.com/bphoto/kqEfzoesVmirZiedCSpTYQ/o.jpg', 6, 3);
 INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Blackbelly Market', 'https://s3-media4.fl.yelpcdn.com/bphoto/pfu36EX6ClYp0c25_MIVlw/o.jpg', 8, 3);
 INSERT INTO Restaurants (name, image_url, rating, total_ratings) VALUES ('Black Cat Bistro', 'https://s3-media3.fl.yelpcdn.com/bphoto/5oCLD0z3nPd6sLDOnmuyQg/o.jpg', 8, 2);
