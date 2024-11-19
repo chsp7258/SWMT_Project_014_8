@@ -11,6 +11,8 @@
                 <p class="restaurant-rating">⭐ Rating: {{rating}}</p>
                 <p class="restaurant-total-ratings">{{total_ratings}} reviews</p>
                 <a href="/add-restaurant?name={{this.name}}&city={{this.location.city}}&image_url={{this.image_url}}" class="btn btn-outline-primary btn-sm">Add Rating</a>
+                <a href="/wishlist/explore/add?name={{this.name}}" class="btn btn-outline-primary btn-sm">Add to wishlist</a>
+
             </div>
         </div>
         {{/each}}
