@@ -96,6 +96,42 @@ app.get('/register', (req, res) => {
     res.render('pages/register', { loggedIn });
 })
 
+// Search for users by username
+app.get('/search-users', async (req, res) => {
+    const { username } = req.query; // Get the username from query parameters
+
+    try {
+        // Query to search for users with similar usernames
+        const users = await db.any(
+            `
+            SELECT id, username 
+            FROM users 
+            WHERE username ILIKE $1
+            LIMIT 10;
+            `, [`%${username}%`]
+        );
+
+        if (users.length === 0) {
+            return res.render('pages/search-users', { 
+                message: 'No users found matching your search.', 
+                loggedIn: true 
+            });
+        }
+
+        // Render the search results
+        res.render('pages/search-users', { 
+            users, 
+            loggedIn: true 
+        });
+
+    } catch (error) {
+        console.error('Error searching for users:', error);
+        res.status(500).render('pages/search-users', { 
+            message: 'An error occurred while searching. Please try again.', 
+            loggedIn: true 
+        });
+    }
+});
 
 app.post('/register', async (req, res) => {
     const username = req.body.username;

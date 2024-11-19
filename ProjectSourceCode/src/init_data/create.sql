@@ -29,3 +29,15 @@ CREATE TABLE Wishlist (
     user_id INT NOT NULL, 
     restaurant VARCHAR(45) NOT NULL 
 );
+
+-- Create Friendships Table
+CREATE TABLE Friendships (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    friend_id INT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending', -- pending, accepted, rejected
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (friend_id) REFERENCES Users(id),
+    CONSTRAINT unique_friendship UNIQUE (user_id, friend_id) -- Prevent duplicate friendships
+);
