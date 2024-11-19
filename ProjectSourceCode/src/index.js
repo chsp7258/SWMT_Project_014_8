@@ -84,7 +84,7 @@ app.get('/welcome', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.redirect('/login');
+    res.redirect('/home');
 });
 
 app.get('/login', (req, res) => {
@@ -120,13 +120,34 @@ app.post('/register', async (req, res) => {
         // Insert new user
         const query = 'INSERT INTO users (username, password) VALUES ($1, $2);';
         await db.none(query, [username, hash]);
+        //res.redirect('/login'); 
+        // ***TO CHANGE THE RGISTER BACK, UNCOMMENT THIS LINE AND COMMENT OUT LINES 124-145**
+        const query2 = `select id ,username, password from users where username = $1;`;
 
-        // Redirect to login page after successful registration
-        res.redirect('/login');
-    } catch (err) {
+        try {
+            const user = await db.oneOrNone(query2, [username]);
+    
+            if (!user) {
+                return res.status(400).render('pages/login', { message: "Username not found. Please try again or register." });
+            }
+    
+            const match = await bcrypt.compare(password, user.password);
+    
+            if (!match) {
+                return res.render('pages/login', { message: "Incorrect username or password please try again" });
+            }
+    
+            req.session.user = user;
+            req.session.save();
+            res.redirect('/home');
+        }catch (error) {
+        console.log(error);
+        res.status(400);
+        };
+        }catch (err) {
         console.error(err);
         res.status(500).render('pages/register', { message: 'An error occurred. Please try again.' });
-    }
+        };
 });
 
 
@@ -169,14 +190,27 @@ const auth = (req, res, next) => {
     next();
 };
 
+
 // Authentication Required
 app.use(auth);
 
-
+// Route to render the logout confirmation page
 app.get('/logout', (req, res) => {
+    // Simply render the logout confirmation page
     res.render('pages/logout');
-    req.session.destroy();
 });
+
+// Route to handle the actual logout logic
+app.post('/logout-confirm', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('login'); // Redirect to the login page after logging out
+    });
+});
+
+// app.post('/logout', (req, res) => {
+//     res.render('pages/login');
+//     req.session.destroy();
+// });
 
 // call to yelp to get info of restaurants
 app.get('/search-restaurant', (req, res) => {
