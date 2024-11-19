@@ -230,7 +230,9 @@ app.get('/home', async (req, res) => {
     //should return the ranked list for an individual
     console.log("GET /rankings/home endpoint hit"); // Verify route hit
     try {
-        const testQuery = `SELECT 
+        const userId = req.session.user.id; // Get logged-in user ID
+        
+        const restaurantQuery = `SELECT 
                             Restaurants.name AS name,
                             Restaurants.image_url AS image_url,
                             Ratings.rating AS rating
@@ -238,13 +240,20 @@ app.get('/home', async (req, res) => {
                             Ratings
                         JOIN 
                             Restaurants ON Ratings.restaurant_id = Restaurants.id
-                        JOIN 
-                            Users ON Ratings.user_id = Users.id;`;
+                        WHERE 
+                            Ratings.user_id = $1;`;
         // Simplified test query
-        const restaurants = await db.any(testQuery);
-        console.log(restaurants);
+        const restaurants = await db.any(restaurantQuery, [userId]);
 
-        res.render('pages/home', {restaurants, 
+        // Fetch wishlist for the logged-in user
+        const wishlistQuery = `
+            SELECT Restaurant
+            FROM Wishlist
+            WHERE user_id = $1;
+        `;
+        const wishlist = await db.any(wishlistQuery, [userId]);
+
+        res.render('pages/home', {restaurants, wishlist,
                                 loggedIn: true, 
                                 username: req.session.user ? req.session.user.username : null  // Ensure user is logged in
         });
@@ -254,6 +263,58 @@ app.get('/home', async (req, res) => {
         res.status(500).send("Server error with test query");
     }
 });
+
+/*
+In explore page there is a wishlist button
+grabs info of restaurant in the card that was selected 
+with no additional cost to user this grabs info from card 
+and adds it to wishlist table
+*/
+app.get('/wishlist/explore/add', async (req, res) => {
+    try {
+        const userId = req.session.user.id; // Corrected to use req.session
+        const { name } = req.query; // Extract the restaurant name from query parameters
+
+        const wishlistQuery = `
+            INSERT INTO Wishlist (user_id, restaurant)
+            VALUES ($1, $2);
+        `;
+
+        // Use db.none for an INSERT query
+        await db.none(wishlistQuery, [userId, name]);
+
+        // Redirect to the explore page
+        res.redirect('/home');
+    } catch (error) {
+        console.error("Error adding to wishlist:", error);
+        res.status(500).send("Server error while adding to wishlist.");
+    }
+});
+
+
+/* grabs user and name of restaurant to add 
+ adds to wishlist table
+ */
+app.post('/wishlist/add', async (req, res) => {
+    try {
+    
+        const userId = req.session.user.id;
+        const {restaurantName} = req.body;
+
+        // Insert into Wishlist table
+        const wishlistQuesry = `
+            INSERT INTO Wishlist (user_id, restaurant)
+            VALUES ($1, $2)
+        `;
+        await db.none(wishlistQuesry, [userId, restaurantName]);
+
+        res.redirect('/home');
+    } catch (error) {
+        console.error("Error adding to wishlist:", error);
+        res.status(500).send("Server error while adding to wishlist.");
+    }
+});
+
 
 /*
 Purpose: add a ranking for a resturant
@@ -269,12 +330,14 @@ app.get('/add-restaurant', (req, res) => {
     res.render('pages/add-restaurant', { name, city, image_url, loggedIn: true });
 });
 
+
 // app.get('/explore', (req, res) => {
 //     res.render('pages/explore');
 // });
 
 /*
-Purpose: get the top restaruants in boulder
+Grabs inputed information from database
+changes displayed info as more info is added to db
 */
 app.get('/explore', async (req, res) => {
     try {
