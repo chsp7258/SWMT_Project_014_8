@@ -23,3 +23,9 @@ CREATE TABLE Ratings (
     FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (restaurant_id) REFERENCES Restaurants(id)
 );
+
+CREATE TABLE Wishlist (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL, 
+    restaurant VARCHAR(45) NOT NULL 
+);

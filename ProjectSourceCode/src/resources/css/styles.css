@@ -1,6 +1,6 @@
 /* Background Gradient */
 .bg-container {
-  background: linear-gradient(120deg, #f6f8f9, #d1d8e0);
+  background: linear-gradient(120deg, #2f6986, #d1d8e0);
   height: 100vh;
   display: flex;
   align-items: center;

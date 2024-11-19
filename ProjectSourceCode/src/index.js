@@ -210,21 +210,11 @@ app.get('/search-restaurant', (req, res) => {
         });
 
   });
-
+// Discover was renamed to Add Rating
 app.get('/discover', (req, res) => {
     const loggedIn = req.session.user ? true : false;
     res.render('pages/discover', { loggedIn });
 });
-
-// app.get('/home', (req, res) => {
-//     const loggedIn = req.session.user ? true : false;
-//     res.render('pages/home', { loggedIn });
-// });
-
-// APIs to interact with backend database
-/* 
-Purpose: get all restaurants and rankings
-*/
 
 app.get('/home', async (req, res) => {
     //should return the ranked list for an individual
@@ -315,6 +305,24 @@ app.post('/wishlist/add', async (req, res) => {
     }
 });
 
+app.post('/wishlist/remove', async (req, res) => {
+    console.log("POST /wishlist/remove endpoint hit");
+    try {
+        const userId = req.session.user.id; // Ensure user is logged in
+        const { restaurant } = req.body; // Get the restaurant name from the request body
+
+        // Delete the restaurant from the Wishlist table
+        const deleteQuery = 
+            `DELETE FROM Wishlist
+            WHERE user_id = $1 AND restaurant = $2 ;`
+        ;
+        await db.none(deleteQuery, [userId, restaurant]);
+        res.redirect('/home');
+    } catch (error) {
+        console.error("Error removing from wishlist:", error);
+        res.status(500).send("Server error while removing from wishlist.");
+    }
+});
 
 /*
 Purpose: add a ranking for a resturant
