@@ -96,43 +96,6 @@ app.get('/register', (req, res) => {
     res.render('pages/register', { loggedIn });
 })
 
-// Search for users by username
-app.get('/search-users', async (req, res) => {
-    const { username } = req.query; // Get the username from query parameters
-
-    try {
-        // Query to search for users with similar usernames
-        const users = await db.any(
-            `
-            SELECT id, username 
-            FROM users 
-            WHERE username ILIKE $1
-            LIMIT 10;
-            `, [`%${username}%`]
-        );
-
-        if (users.length === 0) {
-            return res.render('pages/search-users', { 
-                message: 'No users found matching your search.', 
-                loggedIn: true 
-            });
-        }
-
-        // Render the search results
-        res.render('pages/search-users', { 
-            users, 
-            loggedIn: true 
-        });
-
-    } catch (error) {
-        console.error('Error searching for users:', error);
-        res.status(500).render('pages/search-users', { 
-            message: 'An error occurred while searching. Please try again.', 
-            loggedIn: true 
-        });
-    }
-});
-
 app.post('/register', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -208,6 +171,10 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
+app.get('/home', (req, res) => {
+    const loggedIn = req.session.user ? true : false;
+    res.render('pages/home', { loggedIn });
+});
 
 app.get('/logout', (req, res) => {
     res.render('pages/logout');
@@ -252,41 +219,107 @@ app.get('/discover', (req, res) => {
     res.render('pages/discover', { loggedIn });
 });
 
-app.get('/home', async (req, res) => {
-    //should return the ranked list for an individual
-    console.log("GET /rankings/home endpoint hit"); // Verify route hit
+// Search for users by username
+app.get('/search-users', async (req, res) => {
+    const { username } = req.query; // Get the username from query parameters
+
     try {
-        const userId = req.session.user.id; // Get logged-in user ID
-        
-        const restaurantQuery = `SELECT 
-                            Restaurants.name AS name,
-                            Restaurants.image_url AS image_url,
-                            Ratings.rating AS rating
-                        FROM 
-                            Ratings
-                        JOIN 
-                            Restaurants ON Ratings.restaurant_id = Restaurants.id
-                        WHERE 
-                            Ratings.user_id = $1;`;
-        // Simplified test query
-        const restaurants = await db.any(restaurantQuery, [userId]);
+        // Query to search for users with similar usernames
+        const users = await db.any(
+            `
+            SELECT id, username 
+            FROM users 
+            WHERE username ILIKE $1
+            LIMIT 10;
+            `, [`%${username}%`]
+        );
 
-        // Fetch wishlist for the logged-in user
-        const wishlistQuery = `
-            SELECT Restaurant
-            FROM Wishlist
-            WHERE user_id = $1;
-        `;
-        const wishlist = await db.any(wishlistQuery, [userId]);
+        if (users.length === 0) {
+            return res.render('pages/search-users', { 
+                message: 'No users found matching your search.', 
+                loggedIn: true 
+            });
+        }
 
-        res.render('pages/home', {restaurants, wishlist,
-                                loggedIn: true, 
-                                username: req.session.user ? req.session.user.username : null  // Ensure user is logged in
+        // Render the search results
+        res.render('pages/search-users', { 
+            users, 
+            loggedIn: true 
         });
 
     } catch (error) {
-        console.error("Error with test query:", error);
-        res.status(500).send("Server error with test query");
+        console.error('Error searching for users:', error);
+        res.status(500).render('pages/search-users', { 
+            message: 'An error occurred while searching. Please try again.', 
+            loggedIn: true 
+        });
+    }
+});
+
+app.get('/users/:username', async (req, res) => {
+    const username = req.params.username;
+
+    try {
+        // Fetch user's ratings and wishlist from the database
+        const userRatings = await db.any(
+            `SELECT r.name AS restaurant_name, rt.rating 
+             FROM Ratings rt 
+             JOIN Restaurants r ON rt.restaurant_id = r.id 
+             WHERE rt.user_id = (SELECT id FROM Users WHERE username = $1)`,
+            [username]
+        );
+
+        const userWishlist = await db.any(
+            `SELECT restaurant 
+             FROM Wishlist 
+             WHERE user_id = (SELECT id FROM Users WHERE username = $1)`,
+            [username]
+        );
+
+        // Render the `other-user-home` view with data
+        res.render('pages/other-user-home', { username, ratings: userRatings, wishlist: userWishlist, loggedIn: true });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/users/:username', async (req, res) => {
+    const username = req.params.username;
+
+    try {
+        // Fetch reviews and wishlist for the specified user
+        const userReviews = await db.any(
+            `SELECT r.name, rt.rating, r.image_url
+             FROM Reviews rt
+             JOIN Restaurants r ON rt.restaurant_id = r.id
+             WHERE rt.user_id = (SELECT id FROM Users WHERE username = $1)`,
+            [username]
+        );
+
+        const userWishlist = await db.any(
+            `SELECT restaurant
+             FROM Wishlist
+             WHERE user_id = (SELECT id FROM Users WHERE username = $1)`,
+            [username]
+        );
+
+        if (!userReviews || !userWishlist) {
+            res.status(404).render('error', { message: 'User not found' });
+            return;
+        }
+
+        // Pass logged-in status and username
+        res.render('other-users-home', {
+            username, 
+            reviews: userReviews, 
+            wishlist: userWishlist,
+            loggedIn: !!req.session.user, // Check if a user is logged in
+            username: req.session.user ? req.session.user.username : null
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
