@@ -34,9 +34,27 @@ Handlebars: The front-end is written in Handlebars - a framework built on HTML -
 CSS: The styling for the front-end is written in an external CSS style sheet, which is accessed by the Handlebars code to execute styling for pages and partials.
 
 ## Prerequisites to Run 
+You will need npm, docker, and git installed
 
 ## How to Run
+Clone the repository
+
+Install Dependencies with ```npm i```
+
+Create a .env file with the following variables:
+```
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="pwd"
+POSTGRES_DB="users_db"
+SESSION_SECRET="session_secret"
+API_KEY=<yelp-api-key>
+```
+
+Run ```docker compose up``` to run the server
+
+Access the website on ```localhost:3000```
 
 ## Test Instructions 
+Tests will run when you run ```docker compose up```
 
 ## Application Link
