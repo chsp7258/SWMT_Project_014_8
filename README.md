@@ -50,6 +50,8 @@ SESSION_SECRET="session_secret"
 API_KEY=<yelp-api-key>
 ```
 
+You will have to create your own yelp API key.
+
 Run ```docker compose up``` to run the server
 
 Access the website on ```localhost:3000```
