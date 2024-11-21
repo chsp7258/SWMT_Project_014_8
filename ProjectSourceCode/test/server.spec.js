@@ -138,3 +138,46 @@ describe('Testing /ratings/:restaurantId', () => {
             })
     })
 })
+
+describe('Wishlist API Tests', () => {
+    // Mock session data
+    const mockSession = {
+        user: {
+            id: 1,
+            username: 'testuser'
+        }
+    };
+
+    // Test adding to wishlist
+    describe('POST /wishlist/add', () => {
+        it('should successfully add restaurant to wishlist when user is logged in', (done) => {
+            chai
+                .request(server)
+                .post('/wishlist/add')
+                .set('Cookie', 'session_id=mocksession')
+                .send({
+                    restaurantName: 'Test Restaurant'
+                })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    done();
+                });
+        });
+    });
+
+    describe('POST /wishlist/remove', () => {
+        it('should successfully remove restaurant from wishlist when user is logged in', (done) => {
+            chai
+                .request(server)
+                .post('/wishlist/remove')
+                .set('Cookie', 'connect.sid=mocksession')
+                .send({
+                    restaurant: 'Test Restaurant'
+                })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    done();
+                });
+        });
+    });
+})

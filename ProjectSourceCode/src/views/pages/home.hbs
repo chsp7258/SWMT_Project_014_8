@@ -16,7 +16,7 @@
                 <div class="card-body">
                   <h5 class="card-title">{{this.name}}</h5>
                   <p class="card-text">
-                    <strong>Rating:</strong> {{this.rating}}
+                    <strong>Rating:</strong> {{this.rating}}/10
                   </p>
                 </div>
               </div>
@@ -25,8 +25,8 @@
           </div>
           {{else}}
           <div class="text-center mt-5">
-            <h3 class="text-muted">No restaurants available at the moment.</h3>
-            <p>Check back later for more updates!</p>
+            <h3 class="text-muted">You haven't rated any restaurants yet.</h3>
+              <p>Start exploring and add your ratings to see them here!</p>
           </div>
           {{/if}}
         </div>
@@ -55,7 +55,7 @@
               {{else}}
               <p class="text-center text-muted">No restaurants in your wishlist.</p>
               <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#wishlistModal">Add
-                Wishlist</button>
+                to Wishlist</button>
               {{/if}}
             </ul>
           </div>
