@@ -295,7 +295,7 @@ app.get('/users/:username', async (req, res) => {
     try {
         // Fetch user's ratings and wishlist from the database
         const userRatings = await db.any(
-            `SELECT r.name AS restaurant_name, rt.rating 
+            `SELECT r.name AS restaurant_name, rt.rating, r.image_url
              FROM Ratings rt 
              JOIN Restaurants r ON rt.restaurant_id = r.id 
              WHERE rt.user_id = (SELECT id FROM Users WHERE username = $1)`,
@@ -310,7 +310,7 @@ app.get('/users/:username', async (req, res) => {
         );
 
         // Render the `other-user-home` view with data
-        res.render('pages/other-user-home', { username, ratings: userRatings, wishlist: userWishlist, loggedIn: true });
+        res.render('pages/other-user-home', { username, reviews: userRatings, wishlist: userWishlist, loggedIn: true });
     } catch (error) {
         console.error('Error fetching user data:', error);
         res.status(500).send('Internal Server Error');
