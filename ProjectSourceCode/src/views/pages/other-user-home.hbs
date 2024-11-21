@@ -1,0 +1,56 @@
+<div style="overflow-y: scroll;">
+  <div class="home-container">
+    <div class="container mt-5 pt-5">
+      <div class="row">
+        <!-- Left Column: Reviews -->
+        <div class="col-md-8 bg-light p-4 rounded shadow-lg">
+          <h1 class="text-center mb-4">Welcome to {{username}}'s Page!</h1>
+
+          {{#if reviews.length}}
+          <div id="reviews" class="row g-6">
+            {{#each reviews}}
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card h-100 shadow-sm border-0">
+                <img src="{{this.image_url}}" alt="{{this.name}}" class="card-img-top rounded-top"
+                  style="height: 200px; object-fit: cover;" />
+                <div class="card-body">
+                  <h5 class="card-title">{{this.name}}</h5>
+                  <p class="card-text">
+                    <strong>Rating:</strong> {{this.rating}}
+                  </p>
+                </div>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="text-center mt-5">
+            <h3 class="text-muted">No reviews available.</h3>
+          </div>
+          {{/if}}
+        </div>
+
+        <!-- Right Column: Wishlist -->
+        <div class="col-md-4">
+          <div class="bg-white p-4 rounded shadow-lg">
+            <h2 class="text-center mb-4">{{username}}'s Wishlist</h2>
+            <ul class="list-group">
+              {{#if wishlist.length}}
+              <ul class="list-group list-group-flush numbered-list">
+                {{#each wishlist}}
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center border-0 shadow-sm rounded mb-3">
+                  <span class="fw-bold" style="color: #1f022b;">{{this.restaurant}}</span>
+                </li>
+                {{/each}}
+              </ul>
+              {{else}}
+              <p class="text-center text-muted">No restaurants in the wishlist.</p>
+              {{/if}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

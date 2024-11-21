@@ -1,0 +1,36 @@
+<div class="container mt-4">
+    <h1>Search Users</h1>
+    <form method="get" action="/search-users">
+        <div class="form-group">
+            <label for="username">Search for a user:</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Search</button>
+    </form>
+
+    {{#if users}}
+    <div class="container mt-5">
+        <h2>Search Results</h2>
+        <ul class="list-group">
+            {{#each users}}
+            <li class="list-group-item">
+                <!-- Link to the other user's profile -->
+                <a href="/users/{{this.username}}" class="text-decoration-none">
+                    {{this.username}}
+                </a>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    {{else if message}}
+    <div class="alert alert-warning mt-4" role="alert">
+        {{message}}
+    </div>
+    {{else}}
+    <div class="alert alert-info mt-4" role="alert">
+        No users found. Try searching with a different name.
+    </div>
+    {{/if}}
+</div>
+
+{{> footer}}

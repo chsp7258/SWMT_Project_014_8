@@ -96,7 +96,6 @@ app.get('/register', (req, res) => {
     res.render('pages/register', { loggedIn });
 })
 
-
 app.post('/register', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -194,7 +193,6 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
-// Route to render the logout confirmation page
 app.get('/logout', (req, res) => {
     // Simply render the logout confirmation page
     res.render('pages/logout');
@@ -250,6 +248,43 @@ app.get('/discover', (req, res) => {
     res.render('pages/discover', { loggedIn });
 });
 
+// Search for users by username
+app.get('/search-users', async (req, res) => {
+    const { username } = req.query; // Get the username from query parameters
+
+    try {
+        // Query to search for users with similar usernames
+        const users = await db.any(
+            `
+            SELECT id, username 
+            FROM users 
+            WHERE username ILIKE $1
+            LIMIT 10;
+            `, [`%${username}%`]
+        );
+
+        if (users.length === 0) {
+            return res.render('pages/search-users', { 
+                message: 'No users found matching your search.', 
+                loggedIn: true 
+            });
+        }
+
+        // Render the search results
+        res.render('pages/search-users', { 
+            users, 
+            loggedIn: true 
+        });
+
+    } catch (error) {
+        console.error('Error searching for users:', error);
+        res.status(500).render('pages/search-users', { 
+            message: 'An error occurred while searching. Please try again.', 
+            loggedIn: true 
+        });
+    }
+});
+
 app.get('/home', async (req, res) => {
     //should return the ranked list for an individual
     console.log("GET /rankings/home endpoint hit"); // Verify route hit
@@ -288,6 +323,34 @@ app.get('/home', async (req, res) => {
     }
 });
 
+app.get('/users/:username', async (req, res) => {
+    const username = req.params.username;
+
+    try {
+        // Fetch user's ratings and wishlist from the database
+        const userRatings = await db.any(
+            `SELECT r.name AS restaurant_name, rt.rating, r.image_url
+             FROM Ratings rt 
+             JOIN Restaurants r ON rt.restaurant_id = r.id 
+             WHERE rt.user_id = (SELECT id FROM Users WHERE username = $1)`,
+            [username]
+        );
+
+        const userWishlist = await db.any(
+            `SELECT restaurant 
+             FROM Wishlist 
+             WHERE user_id = (SELECT id FROM Users WHERE username = $1)`,
+            [username]
+        );
+
+        // Render the `other-user-home` view with data
+        res.render('pages/other-user-home', { username, reviews: userRatings, wishlist: userWishlist, loggedIn: true });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 /*
 In explore page there is a wishlist button
 grabs info of restaurant in the card that was selected 
@@ -320,6 +383,7 @@ app.get('/wishlist/explore/add', async (req, res) => {
  adds to wishlist table
  */
 app.post('/wishlist/add', async (req, res) => {
+    console.log('here')
     try {
     
         const userId = req.session.user.id;
