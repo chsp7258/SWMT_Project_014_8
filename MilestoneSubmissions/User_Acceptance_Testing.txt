@@ -1,7 +1,7 @@
 User Acceptance Testing:
 --------------------------------------------------------------------------------------------------------------------------------------------
 1)  Test Case 1: Successful Restaurant Search and Display of Results
-    Description: Verify that the Discover page allows users to search for restaurants by entering a name and location, with results displayed for Boulder/close area restaurants.
+    Description: Verify that the Discover page allows users to search for restaurants by entering a name and location, with results displayed for Boulder/close         area restaurants.
 
     Test Data:
     Restaurant Name: "Buff Restaurant"
@@ -44,7 +44,7 @@ User Acceptance Testing:
 
 
 3)  Test Case 3: Adding a Rating for a Restaurant
-    Description: Verify that users can click "Add Rating" next to a restaurant, navigate to a rating page, where restaurnat name is already in input form and has to input submit ratings for food and price.
+    Description: Verify that users can click "Add Rating" next to a restaurant, navigate to a rating page, where restaurnat name is already in input form and has       to input submit ratings for food and price.
 
     Test Data:
     Restaurant Name in Search: "Oak at Fourteenth"
@@ -62,3 +62,22 @@ User Acceptance Testing:
     The system saves the ratings to the database, associated with the correct restaurant and user.
     A success message displays: "Rating added successfully."
     User is redirected back to the Discover page or home page.
+
+ 4) Test Case 4: Wishlist Functionality (Add and Remove)
+    Description: Verify that users can add restaurants to the wishlist via a modal input and successfully remove them from the homepage wishlist.
+    
+    Test Data:
+    Restaurant Name: "The Sink"
+    
+    Steps:    
+    Navigate to the Discover page.
+    Click the "Add Wishlist" button.
+    In the modal, input "The Sink" as the restaurant name.
+    Click "Submit" to add the restaurant to the wishlist.
+    Navigate to the homepage to verify that "The Sink" appears in the wishlist.
+    Click the "Remove" button next to "The Sink" on the homepage.
+    
+    Expected Results:
+    The modal opens upon clicking "Add Wishlist."
+    "The Sink" appears in the wishlist on the homepage.
+    Clicking "Remove" next to "The Sink" removes it from the wishlist and updates the homepage.
