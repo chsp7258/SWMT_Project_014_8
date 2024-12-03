@@ -1,0 +1,29 @@
+Release Notes - [v2.0.0/11/20/24]
+
+New Features
+
+New Wishlist Feature
+    Added a wishlist feature visible on the homepage, allowing users to view and manage their saved items.
+    Integrated user ratings into the wishlist for a personalized experience.
+
+Homepage Bug Fix
+    Resolved an issue with the homepage display. Users are now appropriately shown relevant information upon logging in.
+
+Server Information Enhancement
+    Updated the server to include additional data, ensuring users always have relevant content to view.
+
+New Explore Page
+    Introduced an Explore page that highlights restaurant ratings.
+    Users can rate restaurants directly from the card using a "Rate" button.
+    Added functionality to add restaurants to the wishlist directly from the card via an "Add to Wishlist" button.
+    The page dynamically updates, showing more details as users contribute additional information.
+
+Logout Issue Fixed
+    Addressed a logout issue to ensure seamless user experience when signing out.
+
+UI/UX Overhaul
+    Revamped the website's appearance for a modern and intuitive interface, enhancing usability and visual appeal.
+
+Search User Ratings Feature
+    Users can now search for other users by username and view their restaurant ratings.
+    This feature fosters greater community engagement and enables exploration of diverse recommendations.
