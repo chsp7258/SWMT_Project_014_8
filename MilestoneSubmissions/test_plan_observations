@@ -1,0 +1,107 @@
+Test Plan and Observations:
+User Testing Results: Lab 11
+Test Cases and Observations
+
+Note: THE DISCOVER PAGE WAS RENAMED THE ADD RATING PAGE ON SITE AFTER CONSIDERING WHAT THE PAGE DOES.
+
+
+Test Case 1: Successful Restaurant Search and Display of Results
+
+Participants:
+Test User 1: Alex (Student, 22 years old, unfamiliar with the application)
+Test User 2: Sarah (Professional, 35 years old, experience with similar apps)
+
+Results:
+Alex's Observations:
+Navigated to the Add rating page (discover) and entered "Buff Restaurant" and "Boulder."
+Clicked "Search" and reviewed the results.
+Stated: "The interface is clean, but I wasn’t sure if I could leave the location field blank to get nearby results."
+Found accurate results but wished for more details like operating hours.
+Outcome: Successful, but user feedback noted for providing more contextual instructions.
+
+Sarah's Observations:
+Quickly located the search fields and entered the data.
+Commented: "The images and ratings were a nice touch, but I had to scroll to find 'Buff Restaurant' in the results."
+Outcome: Successful; feedback suggests making results for exact matches appear at the top or have less restaurants as output.
+This was done on a local host and I did lessen the number of results given by the search to 4 just in case the API grabs the wrong restaurant. 
+Overall: Both users found the results relevant, but minor improvements were suggested for user guidance and result prioritization. Although we still need the location to find the closest exact match in boulder.
+
+
+
+Test Case 2: Handling Invalid Restaurant Name
+
+Participants:
+Test User 3: Farah (student, 21 years old, casual application user)
+Test User 4: Mia (High school student, 16 years old, tech-savvy)
+
+Results:
+Farah’s Observations:
+Entered "djkgdhkl;a" as the restaurant name and "Boulder" as the location.
+Observed: "Page just refreshes and nothing happened"
+Suggested: "A message should pop up telling me what happened."
+Outcome: Error message didn’t display as expected.
+
+Mia's Observations:
+Entered invalid data and triggered the error message.
+Stated: "The feedback is fine, but it didn’t give me an option to search nearby instead of retrying."
+Outcome: Successful error handling, but users preferred suggestions for nearby locations or additional search tips.
+This was done on the local host as well and Mia’s suggestion was good however the API will not do error handling so the easiest fix was to redo the entries. 
+Overall: After encountering the message error problem, a patch was deployed and when Mia tried the application it successfully worked, Although the suggestion couldn’t be implemented they were satisfied with the alternative.
+
+
+
+Test Case 3: Adding a Rating for a Restaurant
+
+Participants:
+Test User 5: Brian (Random, 35 years old, able to use phone)
+Test User 6: Emily (College student, 19 years old, first-time tester of this app)
+
+Results:
+Brian's Observations:
+Searched for "Oak at Fourteenth" suggested by me because he didn’t know any restaurants and clicked "Add Rating."
+Stated: "The pre-filled restaurant name was helpful, but it also looked like the other spots were prefilled which could be confusing."
+Successfully submitted ratings and confirmed that the success message was visible.
+Outcome: Successful, but better clarification of what to input is needed and maybe adjust rating to make sense.
+
+Emily's Observations:
+Followed the same process and submitted her ratings.
+Commented: "The flow was intuitive, but I accidentally clicked 'Back' and lost my data before submitting."
+Outcome: Successful submission after a second attempt; suggested auto-saving form inputs.
+This was done on localhost suggestions were taken into consideration and the rating algorithm was adjusted to test for taste and expense. 
+Outcome: rating math was changed to incorporate taste and expense for the person to find a balance between best bang for buck restaurant. Emily suggested adding a way to see your friends ratings and wishlist.
+
+
+
+Test case 4: Adding and removing wishlist restaurant.
+
+Participants:
+Test User 1: Braxton(roomate, 20 years old, civil engineering)
+Test User 2: Herny (roomate, 20 years old, moderate app experience, first beta tester)
+
+Results:
+Braxton’s Observations:
+Successfully triggered the modal and added "The Sink" to the wishlist.
+Commented: "The process was smooth, but the no message pop up"
+Removed the restaurant from the homepage without issues.
+Outcome: Successful; suggested making confirmation messages persistent until dismissed.
+
+Henry's Observations:
+Clicked "Add Wishlist" but initially thought the modal would auto-fill the restaurant name from search results.
+Added "The Sink" manually and verified its appearance on the homepage.
+Commented: "It would be nice to pre-fill the restaurant name if I already searched for it."
+Removed the restaurant successfully.
+Outcome: Successful; suggested integrating pre-filled restaurant names into the modal if triggered from search results.
+Test was done on localhost. Suggestions were integrated to the explore page. Button now adds a restaurant to the wishlist directly from the card with no extra steps.
+Outcome: Both said it worked fine and didn’t need much to add. Simple and effective is better than overcomplication. Added that maybe adding a way to add restaurants from the explore page directly to the wishlist could be a good feature.
+
+
+
+Summary of Changes Based on Testing
+Improved error message text for invalid or valid entries to pop up. 
+Added logic to prioritize exact matches in search results. Less search results displayed (limited to 4). 
+Incorporated a rating scale description near the input fields and changed how good food tastes as well as how much financial capital needed to eat at a particular restaurant.
+Added a tab to look for other users and see their ratings and wishlist cart.
+Planned future implementation of auto-saving form data to prevent loss when navigating away.
+Lastly for the wishlist to be able to add restaurants from the explore page by clicking a button.
+
+These observations and feedback from diverse participants helped refine the application to ensure better usability and a more user-friendly experience.

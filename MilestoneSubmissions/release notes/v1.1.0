@@ -1,0 +1,27 @@
+Release Notes - [v1.1.0/11/12/24]
+
+New Features
+    Login, Register, Discover & Home Pages
+
+Created fully functional login and registration pages.
+    Integrated with API endpoints to handle user authentication and registration processes seamlessly.
+
+Home Page
+    Implemented a functional home page, providing users with a streamlined and user-friendly starting point upon login.
+
+Discover Page with Yelp Integration
+    Integrated Yelp API to power the Discover page, allowing users to search and view detailed restaurant information.
+    Enhanced user experience by dynamically displaying search results with restaurant details.
+
+Ratings Endpoint
+    Developed and deployed a ratings endpoint that manages user-submitted restaurant ratings.
+    Seamlessly updates database tables to store and retrieve rating information, providing users with personalized feedback.
+
+Testing & QA
+    Automated Testing with Mocha
+    Added specs.js test suite for robust testing of login and registration pages.
+    Ensures critical functionality and endpoints are tested, enhancing reliability and consistency across releases.
+
+Miscellaneous
+    Refined API integrations and endpoint calls for improved responsiveness.
+    Improved data handling and structured error messages across pages to provide clear feedback to users.

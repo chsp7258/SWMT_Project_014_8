@@ -1,0 +1,25 @@
+Features Added:
+
+    Configured Docker using YAML files for deployment and project environment standardization.
+
+    Set up .env in ProjectSourceCode to organize environment variables, complemented by an updated package.json file.
+
+    added .gitignore to exclude unnecessary files, optimizing the repository’s organization.
+
+    Added dedicated login and register pages to support user access and account creation.
+
+    Implemented login and registration endpoints with improved styling for a smoother user experience.
+
+    Added nav.hbs partial to ensure modularity and ease of future navigation updates.
+
+    Updated the main layout (main.hbs) to include a comprehensive navigation bar.
+
+    Developed a logout page to manage user session termination efficiently.
+
+    Laid out the structure and introduced basic stylings for the discover page to enhance usability and visual appeal.
+
+    Merged SQL files, added intermediary tables, and sample data to strengthen relational structure and query efficiency.
+
+    Created templates for API endpoints, paving the way for smoother backend interactions.
+
+    Integrated JavaScript templates to support frontend dynamic functionalities.
